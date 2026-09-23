@@ -1,8 +1,8 @@
 # Roadmap
 
 > **Estado:** Borrador v0.2 · 2026-09-23
-> Referencias: [mission.md](mission.md) · [tech-stack.md](tech-stack.md)
-> Cada ítem marcado `[ ]` debería convertirse en su propia spec (`specs/features/<nombre>/`) antes de implementarse.
+> Referencias: [mission.md](mission.md) · [tech-stack.md](tech-stack.md) · [intentos-fallidos.md](intentos-fallidos.md) · [CHANGELOG](../../CHANGELOG.md)
+> Cada ítem marcado `[ ]` se convierte en su propia spec (`specs/AAAA-MM-DD-<nombre>/` con `requirements.md`, `plan.md` y `validation.md`) antes de implementarse. Usar la skill `/roadmap-spec`.
 > **Cambios v0.2:** verificación con el WhatsApp del propio usuario, dentro del teléfono. Sin backend. iOS descartado.
 
 ---
