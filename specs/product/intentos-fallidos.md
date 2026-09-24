@@ -10,7 +10,7 @@ Registro de lo que **se probó y no funcionó**, o se descartó tras analizarlo,
 
 | ID | Fecha | Tema | Tipo |
 |---|---|---|---|
-| [IF-010](#if-010--salir-sin-esperar-a-que-baileys-cierre-el-websocket) | 2026-09-24 | Salir sin esperar a que Baileys cierre el WebSocket | Probado |
+| [IF-010](#if-010--salir-sin-esperar-a-que-baileys-cierre-el-websocket) | 2026-09-23 | Salir sin esperar a que Baileys cierre el WebSocket | Probado |
 | [IF-009](#if-009--vincular-con-un-sistema-operativo-inventado-en-browser) | 2026-09-23 | Vincular con un sistema operativo inventado en `browser` | Probado (no concluyente) |
 | [IF-008](#if-008--reintentar-la-vinculación-con-credenciales-de-un-intento-fallido) | 2026-09-23 | Reintentar la vinculación con credenciales de un intento fallido | Probado |
 | [IF-007](#if-007--usar-51000000001-como-número-inexistente-tal-cual) | 2026-09-23 | Usar `51000000001` como número inexistente "tal cual" | Probado |
@@ -43,13 +43,13 @@ Registro de lo que **se probó y no funcionó**, o se descartó tras analizarlo,
 
 ## IF-010 — Salir sin esperar a que Baileys cierre el WebSocket
 
-- **Fecha:** 2026-09-24
+- **Fecha:** 2026-09-23
 - **Tipo:** Probado
 - **Contexto:** Cierre de la sesión al terminar `check`/`bench` en el prototipo ([spec](../2026-09-23-prototipo-baileys-escritorio/)). Windows 11, Node 24.19.0, `@whiskeysockets/baileys` 7.0.0-rc14.
 - **Qué se intentó:** (1) Llamar a `sock.end(undefined)` sin esperar y luego `process.exit()`. (2) Esperar el evento `sock.ws.once('close')` antes de salir.
 - **Resultado:** (1) Una de ~25 ejecuciones abortó al salir con `Assertion failed: !(handle->flags & UV_HANDLE_CLOSING), file src\win\async.c, line 94`. (2) El evento nunca llegaba y siempre se esperaba el tiempo máximo (2 s).
 - **Por qué no sirve:** (1) El proceso salía mientras libuv todavía cerraba el socket. (2) `end()` de Baileys ejecuta `ws.removeAllListeners('close')` antes de cerrar, así que borra los listeners externos.
-- **Evidencia:** Salida de consola del autor (2026-09-24); `node_modules/@whiskeysockets/baileys/lib/Socket/socket.js`, función `end` (~línea 472).
+- **Evidencia:** Salida de consola del autor (2026-09-23); `node_modules/@whiskeysockets/baileys/lib/Socket/socket.js`, función `end` (~línea 472).
 - **En su lugar:** `await sock.end(undefined)`: Baileys ya espera el `close` del WebSocket por dentro. Tarda 0,2–0,3 s. Se deja un tope de 2 s por seguridad (`closeSocket` en `src/session.ts`).
 - **Reconsiderar si:** Baileys deja de esperar el cierre dentro de `end()`.
 
@@ -64,8 +64,8 @@ Registro de lo que **se probó y no funcionó**, o se descartó tras analizarlo,
 - **Evidencia:** Mensaje del teléfono reportado por el autor; `validation.md` de la spec, intentos 2 y 3 de CA-01.
 - **En su lugar:** Identidad predefinida de Baileys (`--browser macos`, por defecto). El dispositivo aparece con un nombre genérico, no como "WhatsCheck".
 - **Reconsiderar si:** Se necesita un nombre propio visible: probar `['Mac OS', 'WhatsCheck', …]` o variantes con un sistema operativo real. Ojo: el segundo valor define el `platform id` y debe ser un navegador que WhatsApp reconozca.
-- **Nota 2026-09-24:** El autor informa que otro proyecto suyo con Baileys se muestra en *Dispositivos vinculados* con un nombre propio en la posición del sistema operativo, y funciona. Eso **debilita la conclusión** de esta entrada: el fallo pudo deberse a `'Chrome'` o a la versión `'0.1.0'`, o a otra causa del primer intento. Se prueba `['WhatsCheck', 'Google Chrome', '1.0.0']` (`--browser whatscheck`).
-- **Nota 2026-09-24 (resultado):** Con `['WhatsCheck', 'Google Chrome', '1.0.0']` la vinculación por código **funcionó**, pero el teléfono muestra el dispositivo como **"Google Chrome (Mac OS)"**, no con "WhatsCheck". Conclusión provisional: (1) un sistema operativo inventado **no** impide vincular, así que el fallo original pudo tener otra causa o deberse a `'Chrome'`/`'0.1.0'`; (2) con código de emparejamiento, el nombre visible no sale de `browser` (Baileys envía `companion_platform_display: "Google Chrome (WhatsCheck)"` y `DeviceProps.os: "WhatsCheck"`). El otro proyecto del autor, que sí muestra su nombre propio, se vinculó **por QR**: con QR WhatsApp usa el sistema operativo que envía el cliente; con código, no.
+- **Nota 2026-09-23:** El autor informa que otro proyecto suyo con Baileys se muestra en *Dispositivos vinculados* con un nombre propio en la posición del sistema operativo, y funciona. Eso **debilita la conclusión** de esta entrada: el fallo pudo deberse a `'Chrome'` o a la versión `'0.1.0'`, o a otra causa del primer intento. Se prueba `['WhatsCheck', 'Google Chrome', '1.0.0']` (`--browser whatscheck`).
+- **Nota 2026-09-23 (resultado):** Con `['WhatsCheck', 'Google Chrome', '1.0.0']` la vinculación por código **funcionó**, pero el teléfono muestra el dispositivo como **"Google Chrome (Mac OS)"**, no con "WhatsCheck". Conclusión provisional: (1) un sistema operativo inventado **no** impide vincular, así que el fallo original pudo tener otra causa o deberse a `'Chrome'`/`'0.1.0'`; (2) con código de emparejamiento, el nombre visible no sale de `browser` (Baileys envía `companion_platform_display: "Google Chrome (WhatsCheck)"` y `DeviceProps.os: "WhatsCheck"`). El otro proyecto del autor, que sí muestra su nombre propio, se vinculó **por QR**: con QR WhatsApp usa el sistema operativo que envía el cliente; con código, no.
 
 ## IF-008 — Reintentar la vinculación con credenciales de un intento fallido
 

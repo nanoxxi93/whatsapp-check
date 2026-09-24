@@ -62,10 +62,14 @@ export function printSummary(rows: [string, Summary | null][]): void {
   )
 }
 
-/** Agrega los registros a results/AAAA-MM-DD.jsonl y devuelve la ruta. */
+/** Fecha local AAAA-MM-DD (la misma que `date +%F`); toISOString() daría la fecha UTC. */
+export const localDate = (d = new Date()): string =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+
+/** Agrega los registros a results/AAAA-MM-DD.jsonl (fecha local) y devuelve la ruta. */
 export async function appendJsonl(records: ResultRecord[], dir = DEFAULT_RESULTS_DIR): Promise<string> {
   await mkdir(dir, { recursive: true })
-  const file = join(dir, `${new Date().toISOString().slice(0, 10)}.jsonl`)
+  const file = join(dir, `${localDate()}.jsonl`)
   await appendFile(file, records.map((r) => JSON.stringify(r)).join('\n') + '\n', 'utf8')
   return file
 }

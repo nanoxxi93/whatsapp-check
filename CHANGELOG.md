@@ -24,7 +24,11 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 - Entradas IF-008 (credenciales a medias tras una vinculación fallida) e IF-009 (sistema operativo inventado en la identidad del dispositivo) en `intentos-fallidos.md`.
 - Entrada IF-007 en `intentos-fallidos.md`: libphonenumber quita el `0` después del código de país (`51000000001` → `5100000001`).
 
+#### Eliminado
+- Ítems del roadmap "Validación de la hipótesis", "Feedback de precisión", "Señales combinadas" y "Reputación colaborativa": descartados por el cambio de enfoque (la app no clasifica llamadas como spam). La spec escrita se conserva como descartada ([specs/2026-09-23-validacion-hipotesis](specs/2026-09-23-validacion-hipotesis/)).
+
 #### Corregido
+- Fechas: los registros usaban a veces la fecha UTC (2026-09-24) en lugar de la local (`date +%F`, 2026-09-23). Se unificaron, y `baileys-cli` nombra `results/AAAA-MM-DD.jsonl` con la fecha local.
 - `baileys-cli`: tras cerrar la sesión desde el teléfono (401) se borran solas las credenciales locales; antes había que ejecutar `unlink` antes de volver a vincular.
 - `baileys-cli`: ya no aborta ocasionalmente al salir en Windows (`Assertion failed … src\win\async.c`); se espera a que Baileys cierre el WebSocket (IF-010).
 - `baileys-cli link`: un intento de vinculación sin terminar dejaba credenciales a medias que provocaban 401 en cada reintento. Ahora se borran, y una sesión solo cuenta como vinculada si el emparejamiento se completó (IF-008).
@@ -32,6 +36,7 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 - Los logs de Baileys usan hora ISO; antes el timestamp numérico se enmascaraba como si fuera un teléfono.
 
 #### Cambiado
+- **Enfoque del producto** (`mission.md` v0.3): la app informa si el número tiene WhatsApp y **no detecta spam**. Se quita la métrica "precisión de la hipótesis" y "Marcar como spam" pasa a "Marcar como no deseado" (lista negra personal).
 - `tech-stack.md` §2: en lugar de exigir un nombre de dispositivo propio, el onboarding debe decirle al usuario con qué nombre aparecerá; el nombre propio se investiga en la Fase 1 (IF-009).
 - `baileys-cli`: la identidad `--browser whatscheck` pasa a ser "Google Chrome (WhatsCheck)", con el mismo formato que la de otro proyecto del autor que sí vincula.
 - `baileys-cli`: `npm start` usa `node --import tsx` en lugar de `tsx`, con menos tiempo de arranque.

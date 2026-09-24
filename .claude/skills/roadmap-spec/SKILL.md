@@ -69,7 +69,7 @@ Reglas:
 
 ### Registrar la spec
 - En `roadmap.md`, agrega el enlace al final de la línea del ítem, sin marcarlo como hecho:
-  `- [ ] **Aviso flotante** — … \`M\` → [spec](../2026-09-24-aviso-flotante/)`
+  `- [ ] **Aviso flotante** — … \`M\` → [spec](../2026-09-23-aviso-flotante/)`
 - Deja las tres specs con `**Estado:** Borrador`.
 - En `CHANGELOG.md`, agrega bajo *Añadido*: `Spec de <feature> ([specs/AAAA-MM-DD-<nombre>](specs/AAAA-MM-DD-<nombre>/)).`
 

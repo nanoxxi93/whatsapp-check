@@ -1,8 +1,9 @@
 # Misión del producto
 
 > **Nombre provisional:** WhatsCheck
-> **Estado:** Borrador v0.2 · 2026-09-23
+> **Estado:** Borrador v0.3 · 2026-09-23
 > **Cambios v0.2:** la verificación se hace desde el WhatsApp del propio usuario, vinculado como dispositivo; se elimina la dependencia de un backend o proveedor externo.
+> **Cambios v0.3:** la app informa si el número tiene WhatsApp; **no detecta spam**. La relación "sin WhatsApp ≈ spam" pasa de hipótesis a validar a contexto de uso.
 
 ## Pitch
 
@@ -17,19 +18,18 @@ La verificación la hace **la cuenta de WhatsApp del propio usuario**, vinculada
 - En Latinoamérica y otros mercados donde WhatsApp es casi universal, una persona o negocio real **casi siempre** tiene WhatsApp en su número. Las líneas masivas de call center (troncales SIP, números virtuales, rangos rotativos) **casi nunca** lo tienen.
 - Hoy el usuario no tiene forma de saber esto antes de contestar; tendría que colgar, guardar el número y buscarlo en WhatsApp.
 
-## Hipótesis central
+## Qué informa la app (y qué no)
 
-> *"Un número desconocido que no tiene WhatsApp tiene una probabilidad significativamente mayor de ser publicidad, spam o una línea poco confiable."*
+La app responde un solo hecho: **¿el número que llama tiene WhatsApp?** No clasifica la llamada como spam ni calcula un nivel de riesgo. Qué hacer con ese dato lo decide el usuario.
 
-Es una **señal heurística, no una verdad absoluta**. Hay excepciones legítimas y frecuentes:
+Por qué es útil: mucha gente ya usa la falta de WhatsApp como pista de que una llamada puede ser publicidad o de una línea poco seria, pero hoy solo puede comprobarlo después de colgar. La app le da ese dato mientras suena el teléfono.
 
-- Teléfonos fijos y centrales de empresas (bancos, clínicas, entidades de gobierno).
-- Personas mayores o usuarios sin smartphone.
-- Números internacionales o de países donde WhatsApp no es dominante.
+La app no presenta esa relación como una regla, porque tiene excepciones en ambos sentidos:
 
-Y también **falsos negativos**: muchas empresas que hacen llamadas comerciales usan WhatsApp Business en la misma línea (caso observado: una fintech de préstamos con cuenta Business). La señal no las detecta.
+- Números legítimos **sin** WhatsApp: teléfonos fijos y centrales de empresas (bancos, clínicas, entidades de gobierno), personas mayores o sin smartphone, números internacionales.
+- Llamadas comerciales **con** WhatsApp: muchas empresas usan WhatsApp Business en la misma línea (caso observado: una fintech de préstamos con cuenta Business).
 
-Por eso el producto **informa, no juzga**: el aviso dice *"Este número no tiene WhatsApp"*, no *"Esto es SPAM"*. Validar la hipótesis con datos reales es parte del roadmap (Fase 0 y métricas).
+Por eso el aviso dice *"Este número no tiene WhatsApp"*, nunca *"Esto es SPAM"*. **Decisión 2026-09-23:** no se valida estadísticamente la relación entre WhatsApp y spam, porque el producto no la afirma.
 
 ## Usuarios objetivo
 
@@ -62,7 +62,7 @@ Por eso el producto **informa, no juzga**: el aviso dice *"Este número no tiene
 ### Complementarias
 - Caché local de resultados para no volver a consultar el mismo número.
 - Historial de llamadas verificadas con su resultado.
-- Acción rápida post-llamada: "Abrir chat de WhatsApp" (si tiene) o "Marcar como spam" (feedback propio).
+- Acción rápida post-llamada: "Abrir chat de WhatsApp" (si tiene) o "Marcar como no deseado" (lista negra personal).
 - Lista blanca / lista negra personal.
 - Opción avanzada (opt-in): silenciar o rechazar automáticamente llamadas sin WhatsApp.
 
@@ -88,7 +88,6 @@ Por eso el producto **informa, no juzga**: el aviso dice *"Este número no tiene
 |---|---|
 | Latencia p95 desde que suena hasta que se muestra el resultado | < 3 s |
 | Tasa de verificaciones exitosas (no "no verificado") | > 90 % |
-| Precisión de la hipótesis: % de números "sin WhatsApp" que el usuario marca como spam/no deseado | > 70 % |
 | **Cuentas de usuarios restringidas o baneadas** | **0** en la beta (cualquier caso detiene el despliegue) |
 | Sesiones que se desvinculan solas por mes | < 5 % |
 | Retención a 30 días | > 40 % |

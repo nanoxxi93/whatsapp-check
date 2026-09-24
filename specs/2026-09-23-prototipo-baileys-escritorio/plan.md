@@ -90,5 +90,5 @@ Configuración de la sesión (RF-08), en `session.ts`:
 
 ## Cambios a documentos base
 
-- **Aprobado y aplicado (2026-09-24):** `tech-stack.md` §2, requisito *"Nombre de dispositivo visible y honesto (p. ej. 'WhatsCheck')"* → *"Con código de emparejamiento, WhatsApp no muestra el nombre que envía el cliente (se ve p. ej. 'Google Chrome (Mac OS)'). El onboarding debe decirle al usuario con qué nombre aparecerá. Mostrar un nombre propio queda como investigación de la Fase 1 (spec de vinculación)."* Motivo: [IF-009](../product/intentos-fallidos.md#if-009--vincular-con-un-sistema-operativo-inventado-en-browser).
+- **Aprobado y aplicado (2026-09-23):** `tech-stack.md` §2, requisito *"Nombre de dispositivo visible y honesto (p. ej. 'WhatsCheck')"* → *"Con código de emparejamiento, WhatsApp no muestra el nombre que envía el cliente (se ve p. ej. 'Google Chrome (Mac OS)'). El onboarding debe decirle al usuario con qué nombre aparecerá. Mostrar un nombre propio queda como investigación de la Fase 1 (spec de vinculación)."* Motivo: [IF-009](../product/intentos-fallidos.md#if-009--vincular-con-un-sistema-operativo-inventado-en-browser).
 - `tech-stack.md` §6 *Calidad y entrega*: agregar que los prototipos de la Fase 0 viven en `prototypes/` y no forman parte de la app. **Aprobado y aplicado (2026-09-23).**

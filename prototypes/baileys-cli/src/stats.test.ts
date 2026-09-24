@@ -40,3 +40,8 @@ test('verdict: el peor criterio manda', () => {
   assert.equal(verdict(1000, 3), 'NO_GO')
   assert.equal(verdict(9000, 0), 'NO_GO')
 })
+
+test('localDate usa la fecha local con ceros a la izquierda', async () => {
+  const { localDate } = await import('./output.ts')
+  assert.equal(localDate(new Date(2026, 0, 5, 23, 30)), '2026-01-05')
+})

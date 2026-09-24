@@ -1,9 +1,10 @@
 # Roadmap
 
-> **Estado:** Borrador v0.2 · 2026-09-23
+> **Estado:** Borrador v0.3 · 2026-09-23
 > Referencias: [mission.md](mission.md) · [tech-stack.md](tech-stack.md) · [intentos-fallidos.md](intentos-fallidos.md) · [CHANGELOG](../../CHANGELOG.md)
 > Cada ítem marcado `[ ]` se convierte en su propia spec (`specs/AAAA-MM-DD-<nombre>/` con `requirements.md`, `plan.md` y `validation.md`) antes de implementarse. Usar la skill `/roadmap-spec`.
 > **Cambios v0.2:** verificación con el WhatsApp del propio usuario, dentro del teléfono. Sin backend. iOS descartado.
+> **Cambios v0.3:** la app informa si el número tiene WhatsApp; no detecta spam. Se descartan los ítems que clasificaban llamadas (validación de la hipótesis, feedback de precisión, señales combinadas, reputación colaborativa).
 
 ---
 
@@ -15,8 +16,8 @@
 
 - [x] ~~Confirmar el comportamiento de `onWhatsApp()`~~ — ya validado en un proyecto existente del autor: `[{ jid, exists: true }]` si existe, `[]` si no (ver contrato en [tech-stack.md](tech-stack.md#contrato-de-la-consulta-onwhatsapp-de-baileys)).
 - [x] **Prototipo de escritorio con Baileys** — script Node que vincula **con código de emparejamiento** (no QR) y consulta una lista de números; mide la latencia de conexión en frío + consulta. `S` → [spec](../2026-09-23-prototipo-baileys-escritorio/)
-  - *Resultado (2026-09-24):* vinculación por código ✅; conexión en frío + consulta p95 **2,36 s** → Go "bajo demanda" en escritorio. Hallazgos: IF-007 a IF-010.
-- [ ] **Validación de la hipótesis** — con ese prototipo, medir qué % de 50–100 números de spam conocidos y 50–100 legítimos tiene WhatsApp. Si la diferencia no es clara, el producto no tiene sentido. `M`
+  - *Resultado (2026-09-23):* vinculación por código ✅; conexión en frío + consulta p95 **2,36 s** → Go "bajo demanda" en escritorio. Hallazgos: IF-007 a IF-010.
+- ~~**Validación de la hipótesis**~~ — *Descartado 2026-09-23:* la app informa si el número tiene WhatsApp y no afirma que sea spam, así que no hace falta validar esa relación. → [spec descartada](../2026-09-23-validacion-hipotesis/)
 - [ ] **Comparar motores en Android** — F1 (Baileys + nodejs-mobile) vs F2 (librería JVM): tamaño del APK, latencia de conexión en frío + consulta, soporte de pairing code, mantenimiento. `L`
   - *Del prototipo de escritorio:* medir también el **arranque del motor** (runtime + carga de la librería). En escritorio, solo cargar Baileys tarda 1,4–1,9 s, además de los ~1,6 s (p50) de conectar y consultar.
 - [ ] **Efectos secundarios en el WhatsApp principal** — con la sesión vinculada: ¿el usuario aparece "en línea"?, ¿se silencian las notificaciones del teléfono?, ¿llegan confirmaciones de lectura? Todo debe dar "no". `S`
@@ -60,9 +61,9 @@
 **Objetivo:** que la app sea útil también después de la llamada y aprenda de las decisiones del usuario.
 
 - [ ] **Historial** de llamadas verificadas con su resultado y fecha. `M`
-- [ ] **Acciones post-llamada** — "Abrir chat en WhatsApp", "Marcar como spam", "Es de confianza". `S`
+- [ ] **Acciones post-llamada** — "Abrir chat en WhatsApp", "Marcar como no deseado", "Es de confianza" (alimentan las listas personales). `S`
 - [ ] **Lista blanca / lista negra** personal que tiene prioridad sobre la verificación. `S`
-- [ ] **Feedback de precisión** — el "Marcar como spam" alimenta la métrica de validación de la hipótesis. `S`
+- ~~**Feedback de precisión**~~ — *Descartado 2026-09-23:* dependía de la validación de la hipótesis.
 - [ ] **Personalización del aviso** — posición, tamaño, tema claro/oscuro, duración. `S`
 - [ ] **Soporte multi-SIM** — mostrar en qué línea entra la llamada. `S`
 
@@ -73,7 +74,7 @@
 
 - [ ] **Auto-silenciar** llamadas sin WhatsApp (opt-in; espera el resultado hasta 3 s antes de responder). `S`
 - [ ] **Auto-rechazar** llamadas sin WhatsApp (opt-in, con resumen diario de lo bloqueado). `M`
-- [ ] **Señales combinadas** — sumar al resultado de WhatsApp otras señales (prefijos conocidos de call centers, frecuencia de llamadas del mismo rango, reportes propios) para un nivel de riesgo bajo/medio/alto. `L`
+- ~~**Señales combinadas**~~ — *Descartado 2026-09-23:* calculaba un nivel de riesgo, es decir, clasificaba la llamada como spam, y eso queda fuera del enfoque de la app.
 - [ ] **Reglas por horario** — p. ej. silenciar números sin WhatsApp de noche. `S`
 - [ ] **Widget / tile de ajustes rápidos** para pausar la protección. `S`
 
@@ -84,7 +85,7 @@
 - [ ] **Monetización** — sin costo por consulta, así que encaja un pago único o una versión "Pro" (protección activa, historial ilimitado) en lugar de cobrar por uso. `M`
 - [ ] **Localización** — español, portugués, inglés. `S`
 - [ ] **Código abierto** del motor y del manejo de la sesión, para generar confianza (la app tiene acceso técnico a la cuenta del usuario). `M`
-- [ ] **Reputación colaborativa opcional** — reportes anónimos agregados entre usuarios (con consentimiento; requeriría un backend). `XL`
+- ~~**Reputación colaborativa opcional**~~ — *Descartado 2026-09-23:* reportes de spam entre usuarios; queda fuera del enfoque, y además requeriría un backend.
 
 ---
 
@@ -103,7 +104,7 @@
 1. ¿Motor Baileys + nodejs-mobile o librería JVM? → **Fase 0**.
 2. ¿Conexión bajo demanda o persistente? → depende de la latencia medida en la **Fase 0**. *Avance 2026-09-23:* en escritorio, conectar en frío + consultar tarda p95 **2,36 s** (Go "bajo demanda", [validación](../2026-09-23-prototipo-baileys-escritorio/validation.md)). Falta medirlo en Android con datos móviles y ver el riesgo de baneo de reconectar seguido.
 3. ¿Canal de distribución: Google Play, APK propio o F-Droid? → **Fase 0**.
-4. ¿Mercado de lanzamiento inicial (país)? Afecta la validación de la hipótesis y el marco legal.
+4. ¿Mercado de lanzamiento inicial (país)? Afecta el marco legal y el país por defecto para normalizar números.
 5. ¿Mostrar el nombre de la empresa cuando el número es una cuenta WhatsApp Business? Ayudaría con el caso de empresas comerciales que sí tienen WhatsApp, pero choca con el principio de no mostrar datos del perfil.
 
 ## Decisiones tomadas
@@ -114,5 +115,6 @@
 | 2026-09-23 | `wa.me` descartado | Solo distingue cuentas Business; una cuenta personal y un número inexistente se ven igual |
 | 2026-09-23 | Verificación con el WhatsApp del propio usuario, dentro del teléfono | Reparte la carga entre usuarios, sin servidor ni costos, y las credenciales no salen del teléfono |
 | 2026-09-23 | Sin backend en el MVP | La sesión corre en el teléfono; solo se usa Remote Config como kill switch |
-| 2026-09-24 | La vinculación por código de emparejamiento funciona con Baileys 7 | Validado en el prototipo de escritorio con un número secundario |
-| 2026-09-24 | Se mantiene desactivada la sincronización de historial | `onWhatsApp` no la necesita; sin errores de sesión en ~30 conexiones. Se reevalúa en Android |
+| 2026-09-23 | La app informa si el número tiene WhatsApp; no detecta spam. Se descartan la validación de la hipótesis, el feedback de precisión, las señales combinadas y la reputación colaborativa | Decisión del autor: el producto no afirma que "sin WhatsApp" signifique spam, así que no necesita demostrarlo |
+| 2026-09-23 | La vinculación por código de emparejamiento funciona con Baileys 7 | Validado en el prototipo de escritorio con un número secundario |
+| 2026-09-23 | Se mantiene desactivada la sincronización de historial | `onWhatsApp` no la necesita; sin errores de sesión en ~30 conexiones. Se reevalúa en Android |
