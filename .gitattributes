@@ -1,2 +1,4 @@
 # Forzar LF en todos los archivos de texto, en cualquier sistema operativo
 * text=auto eol=lf
+# Excepción: cmd.exe puede fallar con scripts .bat en LF (etiquetas de GOTO)
+*.bat text eol=crlf

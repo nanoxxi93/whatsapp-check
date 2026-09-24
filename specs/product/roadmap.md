@@ -18,7 +18,8 @@
 - [x] **Prototipo de escritorio con Baileys** — script Node que vincula **con código de emparejamiento** (no QR) y consulta una lista de números; mide la latencia de conexión en frío + consulta. `S` → [spec](../2026-09-23-prototipo-baileys-escritorio/)
   - *Resultado (2026-09-23):* vinculación por código ✅; conexión en frío + consulta p95 **2,36 s** → Go "bajo demanda" en escritorio. Hallazgos: IF-007 a IF-010.
 - ~~**Validación de la hipótesis**~~ — *Descartado 2026-09-23:* la app informa si el número tiene WhatsApp y no afirma que sea spam, así que no hace falta validar esa relación. → [spec descartada](../2026-09-23-validacion-hipotesis/)
-- [ ] **Comparar motores en Android** — F1 (Baileys + nodejs-mobile) vs F2 (librería JVM): tamaño del APK, latencia de conexión en frío + consulta, soporte de pairing code, mantenimiento. `L`
+- [x] **Comparar motores en Android** — F1 (Baileys + nodejs-mobile) vs F4 (whatsmeow + gomobile); F2 (Cobalt) descartado por análisis (IF-011): tamaño del APK, latencia de conexión en frío + consulta, soporte de pairing code, mantenimiento. `L` → [spec](../2026-09-23-comparar-motores-android/)
+  - *Resultado (2026-09-23):* **whatsmeow elegido.** Vinculación por código ✅; total en frío p95 2,15 s con 4G (Poco M5s) y 2,31 s con wifi (Moto G53), 0/40 sin verificar; +17,2 MB al APK, alineado a 16 KB; se muestra como "Google Chrome (WhatsCheck)". Cobalt y Baileys + `nodejs-mobile` descartados (IF-011, IF-013).
   - *Del prototipo de escritorio:* medir también el **arranque del motor** (runtime + carga de la librería). En escritorio, solo cargar Baileys tarda 1,4–1,9 s, además de los ~1,6 s (p50) de conectar y consultar.
 - [ ] **Efectos secundarios en el WhatsApp principal** — con la sesión vinculada: ¿el usuario aparece "en línea"?, ¿se silencian las notificaciones del teléfono?, ¿llegan confirmaciones de lectura? Todo debe dar "no". `S`
 - [ ] **Prueba de resistencia al baneo** — 3–5 números secundarios con uso realista (5–20 consultas/día) durante 3–4 semanas. Registrar cualquier restricción o desvinculación. `L`
@@ -35,7 +36,7 @@
 ### Vinculación y sesión
 - [ ] **Pantalla de consentimiento de riesgo** — explica en lenguaje claro que el método no es oficial y que la cuenta puede ser restringida; exige aceptación explícita. `S`
 - [ ] **Vinculación por código de emparejamiento** — el usuario ingresa su número, la app muestra el código de 8 caracteres y guía los pasos: *WhatsApp → Dispositivos vinculados → Vincular con número de teléfono*. `M`
-  - *Del prototipo:* una vinculación sin terminar deja credenciales que provocan 401 (IF-008): borrarlas. Con código, el teléfono muestra un nombre genérico ("Google Chrome (Mac OS)"); investigar si se puede mostrar "WhatsCheck" (IF-009).
+  - *De los prototipos:* una vinculación sin terminar deja credenciales que provocan 401 (IF-008): borrarlas. El usuario vincula desde el mismo teléfono: **copiar el código al portapapeles** automáticamente. Con whatsmeow el dispositivo aparece como "Google Chrome (WhatsCheck)" (IF-009).
 - [ ] **Motor `WhatsAppPresenceEngine`** con la implementación elegida en la Fase 0 y la configuración obligatoria (sin "en línea", sin historial, sin confirmaciones de lectura, mensajes descartados). `L`
 - [ ] **Almacenamiento cifrado de credenciales** con Android Keystore, excluido del backup. `S`
 - [ ] **Salud de la sesión** — reconexión periódica con WorkManager; detectar desvinculación o baneo y avisar al usuario. `M`
@@ -101,11 +102,10 @@
 
 ## Decisiones abiertas
 
-1. ¿Motor Baileys + nodejs-mobile o librería JVM? → **Fase 0**.
-2. ¿Conexión bajo demanda o persistente? → depende de la latencia medida en la **Fase 0**. *Avance 2026-09-23:* en escritorio, conectar en frío + consultar tarda p95 **2,36 s** (Go "bajo demanda", [validación](../2026-09-23-prototipo-baileys-escritorio/validation.md)). Falta medirlo en Android con datos móviles y ver el riesgo de baneo de reconectar seguido.
-3. ¿Canal de distribución: Google Play, APK propio o F-Droid? → **Fase 0**.
-4. ¿Mercado de lanzamiento inicial (país)? Afecta el marco legal y el país por defecto para normalizar números.
-5. ¿Mostrar el nombre de la empresa cuando el número es una cuenta WhatsApp Business? Ayudaría con el caso de empresas comerciales que sí tienen WhatsApp, pero choca con el principio de no mostrar datos del perfil.
+1. ¿Conexión bajo demanda o persistente? → depende de la latencia medida en la **Fase 0**. *Avance 2026-09-23:* en escritorio, conectar en frío + consultar tarda p95 **2,36 s** (Go "bajo demanda", [validación](../2026-09-23-prototipo-baileys-escritorio/validation.md)). *Android (whatsmeow, 2026-09-23):* p95 **2,15 s** con 4G en el Poco M5s y 2,31 s con wifi en el Moto G53, contando el arranque del motor ([comparación](../2026-09-23-comparar-motores-android/validation.md)). La latencia ya no es un obstáculo para "bajo demanda"; falta ver el riesgo de bloqueo de reconectar seguido.
+2. ¿Canal de distribución: Google Play, APK propio o F-Droid? → **Fase 0**.
+3. ¿Mercado de lanzamiento inicial (país)? Afecta el marco legal y el país por defecto para normalizar números.
+4. ¿Mostrar el nombre de la empresa cuando el número es una cuenta WhatsApp Business? Ayudaría con el caso de empresas comerciales que sí tienen WhatsApp, pero choca con el principio de no mostrar datos del perfil.
 
 ## Decisiones tomadas
 
@@ -116,5 +116,6 @@
 | 2026-09-23 | Verificación con el WhatsApp del propio usuario, dentro del teléfono | Reparte la carga entre usuarios, sin servidor ni costos, y las credenciales no salen del teléfono |
 | 2026-09-23 | Sin backend en el MVP | La sesión corre en el teléfono; solo se usa Remote Config como kill switch |
 | 2026-09-23 | La app informa si el número tiene WhatsApp; no detecta spam. Se descartan la validación de la hipótesis, el feedback de precisión, las señales combinadas y la reputación colaborativa | Decisión del autor: el producto no afirma que "sin WhatsApp" signifique spam, así que no necesita demostrarlo |
+| 2026-09-23 | **Motor: whatsmeow (Go) vía gomobile** | Go en todos los criterios en Android (p95 2,15 s con 4G, 0/20 fallos, +17,2 MB, 16 KB, nombre propio visible). Cobalt y Baileys + `nodejs-mobile` descartados (IF-011, IF-013) |
 | 2026-09-23 | La vinculación por código de emparejamiento funciona con Baileys 7 | Validado en el prototipo de escritorio con un número secundario |
 | 2026-09-23 | Se mantiene desactivada la sincronización de historial | `onWhatsApp` no la necesita; sin errores de sesión en ~30 conexiones. Se reevalúa en Android |

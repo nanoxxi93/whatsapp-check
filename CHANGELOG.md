@@ -18,9 +18,17 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 - `CLAUDE.md` con las reglas para mantener ambos registros al día.
 - Spec del prototipo de escritorio con Baileys ([specs/2026-09-23-prototipo-baileys-escritorio](specs/2026-09-23-prototipo-baileys-escritorio/)).
 - Prototipo `prototypes/baileys-cli/` (Node + TypeScript, `@whiskeysockets/baileys` 7.0.0-rc14): comandos `link` (código de emparejamiento), `check`, `bench`, `status` y `unlink`; traducción de `onWhatsApp` a ✅/⚠️/❔ con tests; medición de latencia en frío con veredicto Go/No-Go; resultados en JSONL con números enmascarados. Pendiente la validación con un número secundario real.
+- Spec de la comparación de motores en Android ([specs/2026-09-23-comparar-motores-android](specs/2026-09-23-comparar-motores-android/)): Baileys + `nodejs-mobile` (F1) contra whatsmeow + `gomobile` (F4, candidato nuevo).
+- App Android de pruebas `prototypes/android-engines/` (Gradle 8.14.3, AGP 8.13.2, Kotlin 2.2.20, Compose): módulo `engine-api` con `WhatsAppPresenceEngine` y el contrato `toCheckResult` portado a Kotlin (11 tests), y pantalla para vincular, consultar y desvincular.
+- Motor **whatsmeow (F4)** en la app de pruebas: módulo Go `wacheck` (vincular por código, `IsOnWhatsApp`, cerrar, desvincular) compilado con `gomobile` (`engine-whatsmeow/build-aar.sh`), con 3 tests de Go; agrega 17,2 MB al APK.
+- Ítem del roadmap **"Comparar motores en Android" validado y cerrado**: motor elegido whatsmeow ([validación](specs/2026-09-23-comparar-motores-android/validation.md)).
+- Mediciones en Android con whatsmeow: p95 en frío **2,31 s** con wifi (Moto G53) y **2,15 s** con 4G (Poco M5s), 0/40 sin verificar. `bench.sh` y `BenchActivity` para medir en frío desde la PC.
+- Entradas IF-012 (Baileys 7 en Node 18 necesita WebCrypto global) e IF-013 (Baileys + `nodejs-mobile` descartado: tamaño y páginas de 16 KB).
+- Entrada IF-011 en `intentos-fallidos.md`: Cobalt (F2) descartado por exigir Java 25 y binarios nativos descargables.
 - Ítem del roadmap **"Prototipo de escritorio con Baileys" validado y cerrado** (todos los criterios obligatorios pasaron).
 - Resultados del prototipo con número secundario: vinculación por código ✅; conexión en frío + consulta **p95 2,36 s** en 20 corridas, sin fallos → **Go "bajo demanda"** en escritorio ([validación](specs/2026-09-23-prototipo-baileys-escritorio/validation.md)).
 - Entrada IF-010 en `intentos-fallidos.md` (cierre del WebSocket de Baileys antes de salir).
+- IF-009 con causa documentada: con código de emparejamiento WhatsApp solo acepta nombres `Navegador (Sistema)` comunes.
 - Entradas IF-008 (credenciales a medias tras una vinculación fallida) e IF-009 (sistema operativo inventado en la identidad del dispositivo) en `intentos-fallidos.md`.
 - Entrada IF-007 en `intentos-fallidos.md`: libphonenumber quita el `0` después del código de país (`51000000001` → `5100000001`).
 
@@ -36,6 +44,9 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 - Los logs de Baileys usan hora ISO; antes el timestamp numérico se enmascaraba como si fuera un teléfono.
 
 #### Cambiado
+- `.gitattributes`: excepción `*.bat text eol=crlf` (p. ej. `gradlew.bat`), porque `cmd.exe` puede fallar con scripts `.bat` en LF. Todo lo demás sigue en LF.
+- **Motor elegido: whatsmeow (Go)** (`tech-stack.md` §2/§4, decisión en el roadmap). El dispositivo vinculado aparece como "Google Chrome (WhatsCheck)".
+- `tech-stack.md`: candidatos de motor F1 (Baileys + `nodejs-mobile`) y F4 (whatsmeow + `gomobile`, nuevo); F2 (Cobalt) descartado.
 - **Enfoque del producto** (`mission.md` v0.3): la app informa si el número tiene WhatsApp y **no detecta spam**. Se quita la métrica "precisión de la hipótesis" y "Marcar como spam" pasa a "Marcar como no deseado" (lista negra personal).
 - `tech-stack.md` §2: en lugar de exigir un nombre de dispositivo propio, el onboarding debe decirle al usuario con qué nombre aparecerá; el nombre propio se investiga en la Fase 1 (IF-009).
 - `baileys-cli`: la identidad `--browser whatscheck` pasa a ser "Google Chrome (WhatsCheck)", con el mismo formato que la de otro proyecto del autor que sí vincula.

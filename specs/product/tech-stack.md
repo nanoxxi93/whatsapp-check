@@ -39,11 +39,12 @@ No existe una API oficial de Meta para consultar si un número arbitrario tiene 
 
 | Opción | Pros | Contras |
 |---|---|---|
-| **F1. Baileys (TypeScript) sobre `nodejs-mobile`** | La librería más usada y mantenida; comunidad grande; `onWhatsApp()` y `requestPairingCode()` listos | Suma decenas de MB al APK; requiere un puente Kotlin ↔ Node; arranque del runtime |
-| **F2. Librería JVM nativa** (p. ej. Cobalt, Java) | Se integra directo con Kotlin; APK más liviano | Comunidad más chica; hay que verificar mantenimiento y soporte de pairing code |
+| ~~F1. Baileys (TypeScript) sobre `nodejs-mobile`~~ | — | **Descartada:** runtime de 50–62 MB, sin alineación de 16 KB en la versión publicada, Node 18 con flag, sin nombre propio visible ([IF-013](intentos-fallidos.md#if-013--motor-baileys--nodejs-mobile-en-android)) |
+| ~~F2. Librería JVM nativa (Cobalt)~~ | — | **Descartada:** exige Java 25 y descarga binarios nativos ([IF-011](intentos-fallidos.md#if-011--motor-jvm-cobalt-en-android)) |
+| ✅ **F4. whatsmeow (Go) + `gomobile` — ELEGIDA** | Madura y muy activa (base del puente de WhatsApp de Matrix); `PairPhone` con nombre visible e `IsOnWhatsApp`; binario nativo sin runtime de JS | Puente Go ↔ Kotlin; licencia MPL-2.0 (revisar en la revisión legal); sesión en SQLite |
 | F3. Implementación propia mínima en Kotlin | Control total, solo lo necesario | Mucho trabajo criptográfico (Noise, emparejamiento); último recurso |
 
-**Decisión provisional:** comparar F1 y F2 en la Fase 0. El motor queda detrás de la interfaz `WhatsAppPresenceEngine`, para poder reemplazarlo sin tocar el resto de la app.
+**Decisión (2026-09-23):** **whatsmeow (F4)**. En Android (Moto G53 con wifi y Poco M5s con 4G) vinculó por código y tuvo, en frío, un total p95 de **2,15 s con datos móviles** y 0/20 sin verificar; agrega 17,2 MB al APK (6,4 MB comprimido), alineado a 16 KB ([comparación](../2026-09-23-comparar-motores-android/validation.md)). El motor queda detrás de `WhatsAppPresenceEngine`.
 
 ### Configuración obligatoria de la sesión
 Sea cual sea el motor, la sesión vinculada debe:
@@ -55,7 +56,7 @@ Sea cual sea el motor, la sesión vinculada debe:
 | **No** sincronizar el historial de chats | Privacidad, menos datos y conexión más rápida |
 | **No** enviar confirmaciones de lectura ni de entrega de lectura | No alterar el WhatsApp del usuario |
 | Descartar todo mensaje entrante sin guardarlo | Solo se usa la sesión para consultar números |
-| El onboarding le dice al usuario **con qué nombre aparecerá** el dispositivo (p. ej. "Google Chrome (Mac OS)") | Con código de emparejamiento WhatsApp no muestra el nombre que envía el cliente ([IF-009](intentos-fallidos.md#if-009--vincular-con-un-sistema-operativo-inventado-en-browser)); el usuario debe poder reconocerlo en *Dispositivos vinculados*. Un nombre propio ("WhatsCheck") se investiga en la Fase 1 |
+| El dispositivo aparece como **"Google Chrome (WhatsCheck)"**: nombre del código de emparejamiento = un valor común válido (`"Chrome (Linux)"`) y sistema operativo del registro = `"WhatsCheck"` (`store.SetOSInfo` en whatsmeow) | El usuario reconoce el dispositivo en *Dispositivos vinculados*. WhatsApp valida el nombre del código pero muestra el sistema operativo del registro ([IF-009](intentos-fallidos.md#if-009--vincular-con-un-sistema-operativo-inventado-en-browser)) |
 | Credenciales cifradas con **Android Keystore** y excluidas del backup | Nunca salen del teléfono |
 
 ### Contrato de la consulta (`onWhatsApp` de Baileys)
@@ -83,7 +84,7 @@ Reglas:
 - Se valida la respuesta por el `jid` devuelto, no por la posición en el arreglo. En algunos países WhatsApp normaliza el número (p. ej. el `9` adicional de Brasil o el `1` de México), así que el `jid` puede no coincidir exactamente con lo enviado. 🔶 Definir la regla de coincidencia por país.
 - Un arreglo vacío **solo** cuenta como `NO_WHATSAPP` si la llamada terminó sin error y la sesión estaba conectada. Es la única forma de distinguir "no tiene" de "no se pudo verificar".
 - Se ignoran los campos adicionales que devuelvan versiones más nuevas del motor (p. ej. `lid`).
-- Implementación de referencia con tests: `prototypes/baileys-cli/src/result.ts` y `result.test.ts`.
+- Implementaciones de referencia con los mismos casos de prueba: `prototypes/baileys-cli/src/result.ts` (TS) y `prototypes/android-engines/engine-api/…/CheckResult.kt` (Kotlin). Con whatsmeow, `IsOnWhatsApp` devuelve `{ JID, IsIn }` y se traduce a `{ jid, exists }` en Go.
 
 ```kotlin
 interface WhatsAppPresenceEngine {
@@ -145,7 +146,7 @@ No hay servidor en el MVP. Lo único remoto es **Firebase Remote Config**, que s
 | Arquitectura | Clean Architecture ligera + MVVM, módulos por feature | Casos de uso testeables sin framework |
 | Inyección de dependencias | **Hilt** | Integración nativa con Services y ViewModels |
 | Concurrencia | **Kotlin Coroutines + Flow** | `withTimeout` en conexión y consulta |
-| Motor WhatsApp | **Baileys + nodejs-mobile** o **librería JVM** 🔶 | Ver sección 2 |
+| Motor WhatsApp | **whatsmeow (Go) vía `gomobile bind`** → `.aar` (solo `arm64-v8a`), sesión en SQLite (`modernc.org/sqlite`, sin cgo) | Ver sección 2; referencia: `prototypes/android-engines/engine-whatsmeow/` |
 | Persistencia | **Room** (caché de resultados + historial) | Consultas locales < 10 ms |
 | Credenciales de sesión | Archivo cifrado con **Android Keystore** (AES-GCM), `allowBackup=false` para ese archivo | Nunca salen del dispositivo |
 | Preferencias | **DataStore** (Preferences) | Modo de aviso, auto-silenciar, TTL de caché |
@@ -161,8 +162,7 @@ core/model                # Entidades de dominio (PhoneNumber, CheckResult, Sess
 core/data                 # Repositorio, Room, almacenamiento cifrado
 core/domain               # CheckNumberUseCase, reglas de caché
 engine/api                # Interfaz WhatsAppPresenceEngine
-engine/baileys            # Implementación F1 (nodejs-mobile + bridge)   🔶
-engine/jvm                # Implementación F2 (librería JVM)             🔶
+engine/whatsmeow          # Implementación con whatsmeow (Go vía gomobile)
 feature/linking           # Consentimiento de riesgo + código de emparejamiento
 feature/screening         # CallScreeningService + VerificationService
 feature/overlay           # Aviso flotante y notificación

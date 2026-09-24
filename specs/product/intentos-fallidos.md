@@ -10,8 +10,11 @@ Registro de lo que **se probó y no funcionó**, o se descartó tras analizarlo,
 
 | ID | Fecha | Tema | Tipo |
 |---|---|---|---|
+| [IF-013](#if-013--motor-baileys--nodejs-mobile-en-android) | 2026-09-23 | Motor Baileys + `nodejs-mobile` en Android | Descartado por análisis |
+| [IF-012](#if-012--baileys-7-en-node-18-sin-webcrypto-global) | 2026-09-23 | Baileys 7 en Node 18 sin WebCrypto global | Probado |
+| [IF-011](#if-011--motor-jvm-cobalt-en-android) | 2026-09-23 | Motor JVM Cobalt en Android | Descartado por análisis |
 | [IF-010](#if-010--salir-sin-esperar-a-que-baileys-cierre-el-websocket) | 2026-09-23 | Salir sin esperar a que Baileys cierre el WebSocket | Probado |
-| [IF-009](#if-009--vincular-con-un-sistema-operativo-inventado-en-browser) | 2026-09-23 | Vincular con un sistema operativo inventado en `browser` | Probado (no concluyente) |
+| [IF-009](#if-009--vincular-con-un-sistema-operativo-inventado-en-browser) | 2026-09-23 | Vincular con un sistema operativo inventado en `browser` | Probado (resuelto con whatsmeow) |
 | [IF-008](#if-008--reintentar-la-vinculación-con-credenciales-de-un-intento-fallido) | 2026-09-23 | Reintentar la vinculación con credenciales de un intento fallido | Probado |
 | [IF-007](#if-007--usar-51000000001-como-número-inexistente-tal-cual) | 2026-09-23 | Usar `51000000001` como número inexistente "tal cual" | Probado |
 | [IF-006](#if-006--vincular-whatsapp-con-código-qr) | 2026-09-23 | Vincular WhatsApp con código QR | Descartado por análisis |
@@ -41,6 +44,42 @@ Registro de lo que **se probó y no funcionó**, o se descartó tras analizarlo,
 
 ---
 
+## IF-013 — Motor Baileys + `nodejs-mobile` en Android
+
+- **Fecha:** 2026-09-23
+- **Tipo:** Descartado por análisis
+- **Contexto:** Opción F1 de la [comparación de motores](../2026-09-23-comparar-motores-android/). Decisión del autor tras ver los datos.
+- **Qué se intentó:** Evaluar Baileys 7 sobre `nodejs-mobile` 18.20.4 (última versión publicada): Baileys en Node 18 en la PC ([IF-012](#if-012--baileys-7-en-node-18-sin-webcrypto-global)) y análisis de `libnode.so` arm64 con `llvm-readelf`/`llvm-strip`.
+- **Resultado:** Baileys corre en Node 18 solo con `--experimental-global-webcrypto`. `libnode.so` pesa 62,5 MB (49,5 MB sin símbolos; 15,4 MB comprimida), sin contar Baileys, y sus segmentos están alineados a **4 KB**.
+- **Por qué no sirve:** (1) No cumple el requisito de páginas de 16 KB (no carga en teléfonos con páginas de 16 KB; Google Play lo exige para apps que apuntan a Android 15+). El arreglo existe en el repo de `nodejs-mobile` desde nov. 2025 pero sin release: habría que compilar Node para Android. (2) Agrega 3–4 veces más al APK que whatsmeow. (3) Con código de emparejamiento no permite un nombre propio visible ([IF-009](#if-009--vincular-con-un-sistema-operativo-inventado-en-browser)). (4) Solo cargar Baileys tarda 1,4–1,9 s en la PC, frente a 0,04–0,06 s del motor whatsmeow en el teléfono. whatsmeow (F4) ya cumplió todos los criterios Go.
+- **Evidencia:** `validation.md` de la comparación de motores (filas CA-04, CA-06); IF-012.
+- **En su lugar:** whatsmeow (Go) + `gomobile`.
+- **Reconsiderar si:** whatsmeow deja de mantenerse o WhatsApp rompe su compatibilidad y no hay arreglo, **y** `nodejs-mobile` publica una versión con Node ≥ 20 y alineación de 16 KB.
+
+## IF-012 — Baileys 7 en Node 18 sin WebCrypto global
+
+- **Fecha:** 2026-09-23
+- **Tipo:** Probado
+- **Contexto:** Motor F1 (Baileys sobre `nodejs-mobile`, que solo publica Node 18.20.4) en la [comparación de motores](../2026-09-23-comparar-motores-android/). Baileys 7 declara `engines: node >= 20`.
+- **Qué se intentó:** Ejecutar `prototypes/baileys-cli` con Node 18.20.8 oficial (zip portable, Windows): primero `import('@whiskeysockets/baileys')` y luego `node --import tsx src/cli.ts check …`.
+- **Resultado:** El `import` solo funciona. Al abrir la sesión falla: `TypeError: Cannot destructure property 'subtle' of 'globalThis.crypto' as it is undefined` (en `src/Utils/crypto.ts`).
+- **Por qué no sirve:** En Node 18, `globalThis.crypto` (WebCrypto) no es global por defecto; lo es desde Node 19. Baileys 7 lo usa al cargar sus utilidades de cifrado.
+- **Evidencia:** Salida de consola del 2026-09-23 con Node 18.20.8.
+- **En su lugar:** Arrancar Node con `--experimental-global-webcrypto`, o asignar `globalThis.crypto = require('node:crypto').webcrypto` antes de cargar Baileys. Con el flag, Baileys 7 conecta y completa el handshake en Node 18 (la prueba terminó en 401 solo porque la sesión del CLI ya no existía). En `nodejs-mobile` se aplica igual.
+- **Reconsiderar si:** `nodejs-mobile` publica una versión con Node ≥ 19.
+
+## IF-011 — Motor JVM Cobalt en Android
+
+- **Fecha:** 2026-09-23
+- **Tipo:** Descartado por análisis
+- **Contexto:** Opción F2 del motor de protocolo ([tech-stack §2](tech-stack.md#motor-de-protocolo-en-el-dispositivo-)); ítem "Comparar motores en Android".
+- **Qué se intentó:** Revisar el estado de Cobalt (`Auties00/Cobalt`, MIT): README en GitHub, releases y Maven Central.
+- **Resultado:** El README actual dice *"Cobalt targets Java 25"*. Usa componentes nativos que descarga al primer uso a `~/.cobalt/natives/`. En Maven Central la última versión publicada es 0.0.9 (2025-03-02); el README muestra 0.1.0.
+- **Por qué no sirve:** Android (ART + D8/R8) no soporta bytecode ni APIs de Java 25, y descargar binarios nativos a una carpeta del usuario no es viable en una app de Android. Las versiones viejas (0.0.x) ya no reciben arreglos frente a los cambios del protocolo.
+- **Evidencia:** README de `github.com/Auties00/Cobalt` y `search.maven.org` (consultados el 2026-09-23).
+- **En su lugar:** Comparar Baileys + `nodejs-mobile` (F1) con **whatsmeow (Go) + `gomobile`** (F4).
+- **Reconsiderar si:** Cobalt publica una variante compatible con Android (Java 17 y sin natives descargables).
+
 ## IF-010 — Salir sin esperar a que Baileys cierre el WebSocket
 
 - **Fecha:** 2026-09-23
@@ -63,6 +102,8 @@ Registro de lo que **se probó y no funcionó**, o se descartó tras analizarlo,
 - **Por qué no sirve:** WhatsApp parece validar que el sistema operativo sea uno conocido en la vinculación por código. No hay documentación oficial y solo se probó una vez, así que la causa es probable pero no está 100 % confirmada.
 - **Evidencia:** Mensaje del teléfono reportado por el autor; `validation.md` de la spec, intentos 2 y 3 de CA-01.
 - **En su lugar:** Identidad predefinida de Baileys (`--browser macos`, por defecto). El dispositivo aparece con un nombre genérico, no como "WhatsCheck".
+- **Nota 2026-09-23 (causa documentada):** la documentación de `PairPhone` en whatsmeow dice: *"The client display name must be formatted as `Browser (OS)`, and only common browsers/OSes are allowed (the server will validate it and return 400 if it's wrong)"*. Eso explica el fallo con `"Chrome (WhatsCheck)"`: **con código de emparejamiento no se puede mostrar un nombre propio**. El motor whatsmeow usa `"Chrome (Linux)"`.
+- **Nota 2026-09-23 (resuelto con whatsmeow):** vinculando por código con whatsmeow, el nombre del código fue `"Chrome (Linux)"` (válido) y el sistema operativo del dispositivo (`DeviceProps.Os`, vía `store.SetOSInfo`) fue `"WhatsCheck"`. El teléfono muestra el dispositivo como **"Google Chrome (WhatsCheck)"** (confirmado por el autor). Conclusión: **sí se puede mostrar un nombre propio**, separando los dos valores: el nombre del código debe ser `Navegador (Sistema)` común, y el nombre visible sale del sistema operativo del registro. En Baileys ambos salen de `browser` (`companion_platform_display` = `"<browser[1]> (<browser[0]>)"` y `DeviceProps.os` = `browser[0]`), por eso no se podía.
 - **Reconsiderar si:** Se necesita un nombre propio visible: probar `['Mac OS', 'WhatsCheck', …]` o variantes con un sistema operativo real. Ojo: el segundo valor define el `platform id` y debe ser un navegador que WhatsApp reconozca.
 - **Nota 2026-09-23:** El autor informa que otro proyecto suyo con Baileys se muestra en *Dispositivos vinculados* con un nombre propio en la posición del sistema operativo, y funciona. Eso **debilita la conclusión** de esta entrada: el fallo pudo deberse a `'Chrome'` o a la versión `'0.1.0'`, o a otra causa del primer intento. Se prueba `['WhatsCheck', 'Google Chrome', '1.0.0']` (`--browser whatscheck`).
 - **Nota 2026-09-23 (resultado):** Con `['WhatsCheck', 'Google Chrome', '1.0.0']` la vinculación por código **funcionó**, pero el teléfono muestra el dispositivo como **"Google Chrome (Mac OS)"**, no con "WhatsCheck". Conclusión provisional: (1) un sistema operativo inventado **no** impide vincular, así que el fallo original pudo tener otra causa o deberse a `'Chrome'`/`'0.1.0'`; (2) con código de emparejamiento, el nombre visible no sale de `browser` (Baileys envía `companion_platform_display: "Google Chrome (WhatsCheck)"` y `DeviceProps.os: "WhatsCheck"`). El otro proyecto del autor, que sí muestra su nombre propio, se vinculó **por QR**: con QR WhatsApp usa el sistema operativo que envía el cliente; con código, no.
