@@ -55,7 +55,7 @@ Sea cual sea el motor, la sesión vinculada debe:
 | **No** sincronizar el historial de chats | Privacidad, menos datos y conexión más rápida |
 | **No** enviar confirmaciones de lectura ni de entrega de lectura | No alterar el WhatsApp del usuario |
 | Descartar todo mensaje entrante sin guardarlo | Solo se usa la sesión para consultar números |
-| Nombre de dispositivo visible y honesto (p. ej. "WhatsCheck") | El usuario lo reconoce en *Dispositivos vinculados* |
+| El onboarding le dice al usuario **con qué nombre aparecerá** el dispositivo (p. ej. "Google Chrome (Mac OS)") | Con código de emparejamiento WhatsApp no muestra el nombre que envía el cliente ([IF-009](intentos-fallidos.md#if-009--vincular-con-un-sistema-operativo-inventado-en-browser)); el usuario debe poder reconocerlo en *Dispositivos vinculados*. Un nombre propio ("WhatsCheck") se investiga en la Fase 1 |
 | Credenciales cifradas con **Android Keystore** y excluidas del backup | Nunca salen del teléfono |
 
 ### Contrato de la consulta (`onWhatsApp` de Baileys)
@@ -76,13 +76,14 @@ Traducción al dominio (`CheckResult`):
 |---|---|
 | Arreglo con una entrada `exists: true` | `HAS_WHATSAPP` |
 | Arreglo vacío `[]` **o** entrada con `exists: false` | `NO_WHATSAPP` |
-| Excepción, timeout, sesión desconectada o desvinculada | `UNKNOWN` — **nunca** `NO_WHATSAPP` |
+| `undefined` (Baileys 7, la consulta USync no trajo resultado), excepción, timeout, sesión desconectada o desvinculada | `UNKNOWN` — **nunca** `NO_WHATSAPP` |
 
 Reglas:
 - Se envía el número en E.164 **sin** `+` (salida de libphonenumber sin el signo).
 - Se valida la respuesta por el `jid` devuelto, no por la posición en el arreglo. En algunos países WhatsApp normaliza el número (p. ej. el `9` adicional de Brasil o el `1` de México), así que el `jid` puede no coincidir exactamente con lo enviado. 🔶 Definir la regla de coincidencia por país.
 - Un arreglo vacío **solo** cuenta como `NO_WHATSAPP` si la llamada terminó sin error y la sesión estaba conectada. Es la única forma de distinguir "no tiene" de "no se pudo verificar".
 - Se ignoran los campos adicionales que devuelvan versiones más nuevas del motor (p. ej. `lid`).
+- Implementación de referencia con tests: `prototypes/baileys-cli/src/result.ts` y `result.test.ts`.
 
 ```kotlin
 interface WhatsAppPresenceEngine {
@@ -200,6 +201,7 @@ Actualizar rápido es crítico: cuando WhatsApp cambia el protocolo, **todos** l
 | Tests de UI | Compose UI Test |
 | Tests del servicio de llamadas | Pruebas instrumentadas + llamadas reales (el emulador simula llamadas con `adb emu gsm call`) |
 | Motor | `FakePresenceEngine` para tests; pruebas manuales **solo con números secundarios** de prueba, nunca con cuentas personales |
+| Prototipos de la Fase 0 | Viven en `prototypes/` (p. ej. `prototypes/baileys-cli/`, Node + TypeScript). Son herramientas de validación: no forman parte de la app ni se distribuyen |
 | Lint / formato | ktlint, detekt, Android Lint |
 | CI/CD | GitHub Actions → Firebase App Distribution (beta) → canal elegido en la sección 5 |
 | Crash reporting | Firebase Crashlytics (sin PII: sin números ni datos de sesión) |
