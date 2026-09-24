@@ -11,9 +11,12 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 ### 2026-09-24
 
 #### Añadido
+- Spike de llamadas en la app de pruebas: filtrado de llamadas de desconocidos (`CallScreeningService`, deja sonar al instante), aviso flotante ✅/⚠️/❔ arrastrable, notificación si no hay permiso de overlay, modo "siempre activo" con notificación fija, arranque al encender, guía de MIUI, y registro de llamadas y de salud con resumen y exportación desde el teléfono (sin PC).
+- Spec del spike de llamadas y aviso flotante ([specs/2026-09-24-spike-llamadas-overlay](specs/2026-09-24-spike-llamadas-overlay/)).
 - Ítem del roadmap **"Efectos secundarios en el WhatsApp principal" validado y cerrado**.
 
 #### Cambiado
+- Roadmap: el spike de llamadas va antes de la prueba de resistencia al baneo, que pasa a ser de uso real con el único número secundario.
 - `tech-stack.md` §2: "no marcarse en línea" verificado en dispositivo y nuevo requisito de minimización de datos.
 - Motor whatsmeow: **no guarda la agenda, los ajustes de chats ni los secretos de mensajes** del usuario (stores vacíos y limpieza al abrir); solo conserva lo que el protocolo necesita.
 

@@ -110,6 +110,9 @@ class WhatsmeowEngine(private val dataDir: File) : WhatsAppPresenceEngine {
         }
     }
 
+    /** Último error informado por whatsmeow (vacío si no hubo); puede contener un jid: enmascarar antes de guardar. */
+    fun lastError(): String = engine?.lastError().orEmpty()
+
     /** Solo para pruebas: filas por tabla de la base de whatsmeow, sin contenido. */
     suspend fun tableCounts(): String = withContext(Dispatchers.IO) { engine().tableCounts() }
 

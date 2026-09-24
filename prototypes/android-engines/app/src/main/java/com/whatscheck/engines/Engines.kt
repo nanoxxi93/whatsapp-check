@@ -5,12 +5,21 @@ import com.whatscheck.engine.WhatsAppPresenceEngine
 import com.whatscheck.engines.whatsmeow.WhatsmeowEngine
 import java.io.File
 
-/** Motores compilados en esta app de pruebas. T5 agrega Baileys. */
+/** Motores compilados en esta app de pruebas (Baileys se descartó: IF-013). */
 object Engines {
-    /** Cada motor guarda su sesión en su propia carpeta dentro de filesDir (RNF-02). */
-    fun available(context: Context): List<WhatsAppPresenceEngine> = listOf(
-        WhatsmeowEngine(File(context.filesDir, "whatsmeow")),
-    )
+    @Volatile private var cached: List<WhatsAppPresenceEngine>? = null
+
+    /**
+     * Una sola instancia por proceso: la pantalla, el filtrado de llamadas y el servicio "siempre activo"
+     * comparten el mismo motor y la misma base. Cada motor guarda su sesión en su carpeta de filesDir (RNF-02).
+     */
+    fun available(context: Context): List<WhatsAppPresenceEngine> = cached ?: synchronized(this) {
+        cached ?: listOf<WhatsAppPresenceEngine>(
+            WhatsmeowEngine(File(context.applicationContext.filesDir, "whatsmeow")),
+        ).also { cached = it }
+    }
+
+    fun whatsmeow(context: Context): WhatsmeowEngine = available(context).first() as WhatsmeowEngine
 }
 
 object Phone {
