@@ -20,6 +20,7 @@
 | CA-11 | RF-06, RNF-04 | `calls.jsonl` tiene números enmascarados; `logcat` de la app no muestra números completos; el manifest no pide `READ_CONTACTS`, `READ_CALL_LOG` ni `READ_PHONE_STATE`. | Revisión | Sí |
 | CA-12 | RF-08 | El servicio "siempre activo" arranca solo al encender el teléfono y su notificación es de prioridad mínima (no suena ni aparece como emergente). | Reinicio del Poco + registro | Sí |
 | CA-13 | RF-09 | El resumen en pantalla coincide con el registro, y "Exportar" comparte los archivos sin números completos, sin necesidad de PC. | Manual en el teléfono | Sí |
+| CA-14 | RF-11 | La notificación de sesión caída se ve con el ícono propio y abre la app; la lógica avisa una sola vez por problema. Si durante la semana la sesión se cae de verdad, llega la notificación. | `action alert-test` por adb + revisión de código | Sí |
 
 ## Criterios Go / No-Go
 
@@ -59,6 +60,7 @@ Con el Moto llamando al Poco (número no guardado):
 |---|---|---|---|---|
 | 2026-09-24 | T1–T4b (compilación) | `./gradlew :app:assembleDebug` | ✅ Compila | `ScreeningService`, `CallCheck`, `OverlayController`, `Notifier`, `KeepAliveService` (`specialUse`), `BootReceiver`, `Journal` (resumen + exportar con `FileProvider` limitado a `files/results/`) |
 | 2026-09-24 | CA-12 (parcial) | Instalación en el Poco + `dumpsys activity services` | ✅ Servicio activo | `KeepAliveService` con `isForeground=true` en el canal `servicio_activo` (importancia mínima). Falta comprobar el arranque tras reiniciar el teléfono |
+| 2026-09-24 | CA-14 (visual) | `am start … BenchActivity --es action alert-test` + `cmd statusbar expand-notifications` | ✅ | "WhatsCheck se desvinculó de tu WhatsApp · Ya no se verifican las llamadas. Abre la app para vincular de nuevo.", con el ícono propio. La prueba no toca la sesión ni marca el aviso como enviado |
 | 2026-09-24 | CA-11 (manifest) | Revisión de `AndroidManifest.xml` | ✅ | Sin `READ_CONTACTS`, `READ_CALL_LOG` ni `READ_PHONE_STATE`. `ScreeningService` protegido con `BIND_SCREENING_SERVICE` |
 
 ## Bloqueos

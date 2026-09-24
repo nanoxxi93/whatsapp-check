@@ -11,6 +11,7 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 ### 2026-09-24
 
 #### Añadido
+- Aviso inmediato si la sesión se cae o WhatsApp restringe la cuenta: notificación de alta prioridad, una sola vez por problema (detectado en la siguiente llamada o consulta).
 - Diseño de la app de pruebas (v0.2, [spec](specs/2026-09-24-ui-app-pruebas/)): vistas Inicio / Registro / Ajustes con barra inferior, número vinculado (enmascarado, con "Mostrar"), consulta manual, vinculación guiada, ícono propio (auricular con insignia de verificado, sin imitar a WhatsApp) y tema claro/oscuro.
 - Spike de llamadas en la app de pruebas: filtrado de llamadas de desconocidos (`CallScreeningService`, deja sonar al instante), aviso flotante ✅/⚠️/❔ arrastrable, notificación si no hay permiso de overlay, modo "siempre activo" con notificación fija, arranque al encender, guía de MIUI, y registro de llamadas y de salud con resumen y exportación desde el teléfono (sin PC).
 - Spec del spike de llamadas y aviso flotante ([specs/2026-09-24-spike-llamadas-overlay](specs/2026-09-24-spike-llamadas-overlay/)).

@@ -53,6 +53,11 @@ class BenchActivity : Activity() {
                             "${seconds}s " + (engine as WhatsmeowEngine).hold(seconds)
                         }
                         "stats" -> (engine as WhatsmeowEngine).tableCounts()
+                        // Solo muestra la notificación de sesión caída, para revisar cómo se ve (no toca la sesión)
+                        "alert-test" -> {
+                            com.whatscheck.engines.call.Notifier.sessionProblem(applicationContext, com.whatscheck.engine.SessionState.LOGGED_OUT)
+                            "notificación de prueba mostrada"
+                        }
                         else -> error("acción desconocida: $action")
                     }
                 }.getOrElse { "ERROR ${it.message?.let(Phone::maskInText)}" }

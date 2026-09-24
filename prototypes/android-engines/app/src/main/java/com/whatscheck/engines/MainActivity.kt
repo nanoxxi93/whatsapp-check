@@ -109,4 +109,8 @@ object Prefs {
     private fun p(c: Context) = c.getSharedPreferences("whatscheck", Context.MODE_PRIVATE)
     fun keepAlive(c: Context) = p(c).getBoolean("keepAlive", true)
     fun setKeepAlive(c: Context, on: Boolean) = p(c).edit().putBoolean("keepAlive", on).apply()
+
+    /** Último problema de sesión ya notificado (para avisar una sola vez por problema). */
+    fun lastSessionAlert(c: Context): String? = p(c).getString("lastSessionAlert", null)
+    fun setLastSessionAlert(c: Context, state: String?) = p(c).edit().putString("lastSessionAlert", state).apply()
 }

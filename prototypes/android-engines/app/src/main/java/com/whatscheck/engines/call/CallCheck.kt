@@ -12,6 +12,7 @@ import com.whatscheck.engine.SessionState
 import com.whatscheck.engine.UnknownReason
 import com.whatscheck.engines.Engines
 import com.whatscheck.engines.Phone
+import com.whatscheck.engines.Prefs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -73,10 +74,22 @@ object CallCheck {
         }
     }
 
-    /** Eventos de sesión que importan para la prueba de resistencia al baneo (RF-10). */
+    /**
+     * Eventos de sesión que importan para la prueba de resistencia al baneo (RF-10) y aviso inmediato al usuario
+     * (RF-11): una notificación por problema; se rearma cuando la sesión vuelve a estar bien. whatsmeow solo se
+     * entera al conectarse, así que se detecta en la siguiente llamada o consulta manual.
+     */
     private fun reportSession(context: Context, state: SessionState, lastError: String) {
-        if (state == SessionState.LOGGED_OUT || state == SessionState.BANNED) {
-            Journal.health(context, "session", "$state ${Phone.maskInText(lastError)}".trim())
+        when (state) {
+            SessionState.LOGGED_OUT, SessionState.BANNED -> {
+                Journal.health(context, "session", "$state ${Phone.maskInText(lastError)}".trim())
+                if (Prefs.lastSessionAlert(context) != state.name) {
+                    Notifier.sessionProblem(context, state)
+                    Prefs.setLastSessionAlert(context, state.name)
+                }
+            }
+            SessionState.READY, SessionState.CLOSED -> Prefs.setLastSessionAlert(context, null)
+            else -> Unit
         }
     }
 
