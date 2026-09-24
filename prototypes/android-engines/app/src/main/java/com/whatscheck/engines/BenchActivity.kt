@@ -9,6 +9,7 @@ import android.os.SystemClock
 import android.widget.TextView
 import com.whatscheck.engine.CheckResult
 import com.whatscheck.engine.CheckStatus
+import com.whatscheck.engines.whatsmeow.WhatsmeowEngine
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,11 +40,24 @@ class BenchActivity : Activity() {
         val network = intent.getStringExtra("network")
         val engine = Engines.available(applicationContext).first { it.id == engineId }
 
-        if (intent.getStringExtra("action") == "unlink") {
+        val action = intent.getStringExtra("action")
+        if (action != null) {
+            // Acciones de prueba por adb: unlink, hold (--es seconds 60) y stats. Resultado en actions.log, sin contenido.
+            status.text = "Acción: $action…"
             CoroutineScope(Dispatchers.Main).launch {
-                val outcome = runCatching { engine.unlink() }.fold({ "UNLINKED" }, { "ERROR ${it.message?.let(Phone::maskInText)}" })
+                val outcome = runCatching {
+                    when (action) {
+                        "unlink" -> { engine.unlink(); "UNLINKED" }
+                        "hold" -> {
+                            val seconds = intent.getStringExtra("seconds")?.toLongOrNull() ?: 60L
+                            "${seconds}s " + (engine as WhatsmeowEngine).hold(seconds)
+                        }
+                        "stats" -> (engine as WhatsmeowEngine).tableCounts()
+                        else -> error("acción desconocida: $action")
+                    }
+                }.getOrElse { "ERROR ${it.message?.let(Phone::maskInText)}" }
                 val dir = File(filesDir, "results").apply { mkdirs() }
-                File(dir, "actions.log").appendText("${Instant.now()} unlink ${engine.id}: $outcome\n")
+                File(dir, "actions.log").appendText("${Instant.now()} $action ${engine.id}: $outcome\n")
                 status.text = outcome
                 finish()
                 Process.killProcess(Process.myPid())

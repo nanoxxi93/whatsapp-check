@@ -99,6 +99,20 @@ class WhatsmeowEngine(private val dataDir: File) : WhatsAppPresenceEngine {
         state.value = SessionState.UNLINKED
     }
 
+    /** Solo para pruebas: mantiene la sesión abierta [seconds] s. Devuelve JSON con eventos por tipo, sin contenido. */
+    suspend fun hold(seconds: Long): String = withContext(Dispatchers.IO) {
+        val e = engine()
+        state.value = SessionState.CONNECTING
+        try {
+            e.hold(seconds)
+        } finally {
+            state.value = parseState(e.state())
+        }
+    }
+
+    /** Solo para pruebas: filas por tabla de la base de whatsmeow, sin contenido. */
+    suspend fun tableCounts(): String = withContext(Dispatchers.IO) { engine().tableCounts() }
+
     companion object {
         const val CONNECT_TIMEOUT_MS = 15_000L
         const val QUERY_TIMEOUT_MS = 5_000L

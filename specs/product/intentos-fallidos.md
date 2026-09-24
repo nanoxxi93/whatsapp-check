@@ -10,6 +10,7 @@ Registro de lo que **se probó y no funcionó**, o se descartó tras analizarlo,
 
 | ID | Fecha | Tema | Tipo |
 |---|---|---|---|
+| [IF-014](#if-014--observar-efectos-con-otro-cliente-vinculado-activo-o-con-la-última-vez-oculta) | 2026-09-23 | Observar efectos con otro cliente vinculado activo o con la "última vez" oculta | Probado |
 | [IF-013](#if-013--motor-baileys--nodejs-mobile-en-android) | 2026-09-23 | Motor Baileys + `nodejs-mobile` en Android | Descartado por análisis |
 | [IF-012](#if-012--baileys-7-en-node-18-sin-webcrypto-global) | 2026-09-23 | Baileys 7 en Node 18 sin WebCrypto global | Probado |
 | [IF-011](#if-011--motor-jvm-cobalt-en-android) | 2026-09-23 | Motor JVM Cobalt en Android | Descartado por análisis |
@@ -43,6 +44,18 @@ Registro de lo que **se probó y no funcionó**, o se descartó tras analizarlo,
 ```
 
 ---
+
+## IF-014 — Observar efectos con otro cliente vinculado activo o con la "última vez" oculta
+
+- **Fecha:** 2026-09-23
+- **Tipo:** Probado
+- **Contexto:** Protocolo de la [spec de efectos en el WhatsApp principal](../2026-09-23-efectos-whatsapp-principal/).
+- **Qué se intentó:** Línea base (whatsmeow desconectado) enviando un mensaje al número secundario desde el WhatsApp Web personal del autor.
+- **Resultado:** (1) El mensaje salió con **checks azules** y el teléfono del secundario **no notificó**, aunque la app de WhatsCheck ni corría. (2) El observador **nunca veía "en línea"**, ni con WhatsApp abierto en el teléfono del secundario.
+- **Por qué no sirve:** (1) El número secundario tenía vinculado otro proyecto del autor (un cliente siempre conectado que marca los mensajes como leídos). Mientras hay un dispositivo "activo", WhatsApp no notifica en el teléfono. (2) El observador tenía oculta su propia "última vez"; por reciprocidad, WhatsApp no le mostraba la de otros.
+- **Evidencia:** `validation.md` de la spec (escenarios A, A2 y control positivo).
+- **En su lugar:** Antes de observar: (a) el número bajo prueba sin otros clientes vinculados activos; (b) el observador con su "última vez" visible; (c) **control positivo**: con WhatsApp abierto en el teléfono del secundario, el observador tiene que ver "en línea". Con eso la línea base salió limpia.
+- **Reconsiderar si:** No aplica; es un requisito del montaje de prueba. Nota para el producto: si el usuario tiene WhatsApp Web o Desktop **activo**, su teléfono no notifica aunque WhatsCheck no haga nada. No es un efecto de la app.
 
 ## IF-013 — Motor Baileys + `nodejs-mobile` en Android
 

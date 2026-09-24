@@ -45,8 +45,8 @@ const (
 )
 
 func init() {
-	// Identidad del dispositivo en el registro. Con vinculación por QR, el teléfono muestra este sistema;
-	// con código de emparejamiento, muestra PairDisplayName.
+	// Identidad del dispositivo en el registro: el teléfono lo muestra como "Google Chrome (WhatsCheck)",
+	// también al vincular por código (PairDisplayName solo se valida, no se muestra; ver IF-009).
 	store.SetOSInfo("WhatsCheck", [3]uint32{0, 1, 0})
 	store.DeviceProps.PlatformType = waCompanionReg.DeviceProps_CHROME.Enum()
 }
@@ -81,6 +81,12 @@ func NewEngine(dataDir string) (*Engine, error) {
 	}
 	device, err := container.GetFirstDevice(ctx) // crea uno nuevo si no hay sesión
 	if err != nil {
+		_ = db.Close()
+		return nil, err
+	}
+	// Minimización de datos: ni agenda, ni ajustes de chats, ni secretos de mensajes (nostore.go)
+	minimizeStore(device)
+	if err := purgeTables(ctx, db, purgedTables); err != nil {
 		_ = db.Close()
 		return nil, err
 	}
@@ -270,6 +276,80 @@ func (e *Engine) Unlink(timeoutMs int64) error {
 		_ = os.Remove(e.dbPath + suffix)
 	}
 	e.setState(StateUnlinked)
+	return nil
+}
+
+// Hold conecta la sesión guardada, la mantiene abierta durante seconds y la cierra, sin consultar nada.
+// Sirve para observar desde otro WhatsApp si la sesión altera algo (presencia, lecturas, notificaciones).
+// Devuelve JSON con la cantidad de eventos recibidos por tipo, sin su contenido: {"*events.Message": 1, ...}.
+func (e *Engine) Hold(seconds int64) (string, error) {
+	var mu sync.Mutex
+	counts := map[string]int{}
+	id := e.client.AddEventHandler(func(evt any) {
+		mu.Lock()
+		counts[fmt.Sprintf("%T", evt)]++
+		mu.Unlock()
+	})
+	defer e.client.RemoveEventHandler(id)
+
+	if err := e.Connect(15_000); err != nil {
+		return "", err
+	}
+	time.Sleep(time.Duration(seconds) * time.Second)
+	e.Close()
+
+	mu.Lock()
+	defer mu.Unlock()
+	out, err := json.Marshal(counts)
+	return string(out), err
+}
+
+// TableCounts devuelve JSON con la cantidad de filas de cada tabla de la base, sin su contenido.
+// Sirve para verificar qué guarda whatsmeow en el teléfono (minimización de datos).
+func (e *Engine) TableCounts() (string, error) {
+	rows, err := e.db.Query(`SELECT name FROM sqlite_master WHERE type = 'table' ORDER BY name`)
+	if err != nil {
+		return "", err
+	}
+	var tables []string
+	for rows.Next() {
+		var name string
+		if err := rows.Scan(&name); err != nil {
+			rows.Close()
+			return "", err
+		}
+		tables = append(tables, name)
+	}
+	rows.Close()
+
+	counts := make(map[string]int64, len(tables))
+	for _, t := range tables {
+		var n int64
+		// Los nombres salen de sqlite_master, no de una entrada externa.
+		if err := e.db.QueryRow(`SELECT COUNT(*) FROM "` + t + `"`).Scan(&n); err != nil {
+			return "", fmt.Errorf("contar %s: %w", t, err)
+		}
+		counts[t] = n
+	}
+	out, err := json.Marshal(counts)
+	return string(out), err
+}
+
+// purgeTables vacía las tablas indicadas si existen (sin tocar las que falten).
+func purgeTables(ctx context.Context, db *sql.DB, tables []string) error {
+	for _, t := range tables {
+		var exists int
+		if err := db.QueryRowContext(ctx, `SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = ?`, t).Scan(&exists); err != nil {
+			return err
+		}
+		if exists == 0 {
+			continue
+		}
+		// Los nombres vienen de purgedTables (constantes del código), no de una entrada externa.
+		if _, err := db.ExecContext(ctx, `DELETE FROM "`+t+`"`); err != nil {
+			return fmt.Errorf("vaciar %s: %w", t, err)
+		}
+	}
 	return nil
 }
 

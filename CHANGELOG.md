@@ -8,6 +8,15 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 
 ## [Sin publicar]
 
+### 2026-09-24
+
+#### Añadido
+- Ítem del roadmap **"Efectos secundarios en el WhatsApp principal" validado y cerrado**.
+
+#### Cambiado
+- `tech-stack.md` §2: "no marcarse en línea" verificado en dispositivo y nuevo requisito de minimización de datos.
+- Motor whatsmeow: **no guarda la agenda, los ajustes de chats ni los secretos de mensajes** del usuario (stores vacíos y limpieza al abrir); solo conserva lo que el protocolo necesita.
+
 ### 2026-09-23
 
 #### Añadido
@@ -21,6 +30,10 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 - Spec de la comparación de motores en Android ([specs/2026-09-23-comparar-motores-android](specs/2026-09-23-comparar-motores-android/)): Baileys + `nodejs-mobile` (F1) contra whatsmeow + `gomobile` (F4, candidato nuevo).
 - App Android de pruebas `prototypes/android-engines/` (Gradle 8.14.3, AGP 8.13.2, Kotlin 2.2.20, Compose): módulo `engine-api` con `WhatsAppPresenceEngine` y el contrato `toCheckResult` portado a Kotlin (11 tests), y pantalla para vincular, consultar y desvincular.
 - Motor **whatsmeow (F4)** en la app de pruebas: módulo Go `wacheck` (vincular por código, `IsOnWhatsApp`, cerrar, desvincular) compilado con `gomobile` (`engine-whatsmeow/build-aar.sh`), con 3 tests de Go; agrega 17,2 MB al APK.
+- Spec de los efectos secundarios en el WhatsApp principal ([specs/2026-09-23-efectos-whatsapp-principal](specs/2026-09-23-efectos-whatsapp-principal/)): observación con WhatsApp Web ("en línea", checks, notificaciones, no leídos) e inspección de la base local.
+- Efectos en el WhatsApp principal verificados con WhatsApp real: con whatsmeow conectado (3 min y 5 conexiones cortas) el número **no aparece "en línea"**, los mensajes quedan en **doble check gris**, **llegan las notificaciones** y siguen **sin leer**; el texto de los mensajes **no queda en la base** ([validación](specs/2026-09-23-efectos-whatsapp-principal/validation.md)).
+- Acciones de prueba `hold` y `stats` en la app de pruebas.
+- Entrada IF-014: para observar efectos hacen falta un número sin otros clientes activos, un observador con su "última vez" visible y un control positivo.
 - Ítem del roadmap **"Comparar motores en Android" validado y cerrado**: motor elegido whatsmeow ([validación](specs/2026-09-23-comparar-motores-android/validation.md)).
 - Mediciones en Android con whatsmeow: p95 en frío **2,31 s** con wifi (Moto G53) y **2,15 s** con 4G (Poco M5s), 0/40 sin verificar. `bench.sh` y `BenchActivity` para medir en frío desde la PC.
 - Entradas IF-012 (Baileys 7 en Node 18 necesita WebCrypto global) e IF-013 (Baileys + `nodejs-mobile` descartado: tamaño y páginas de 16 KB).
