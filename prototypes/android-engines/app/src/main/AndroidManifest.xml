@@ -14,7 +14,9 @@
     <!-- RNF-02: las credenciales de la sesión viven en filesDir y no deben ir al backup -->
     <application
         android:allowBackup="false"
-        android:label="WhatsCheck · motores"
+        android:icon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:label="WhatsCheck"
         android:theme="@android:style/Theme.Material.Light.NoActionBar">
         <activity
             android:name=".MainActivity"

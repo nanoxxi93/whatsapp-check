@@ -39,6 +39,9 @@ object Journal {
         if (!f.exists()) emptyList() else f.readLines().filter { it.isNotBlank() }.mapNotNull { runCatching { JSONObject(it) }.getOrNull() }
     }
 
+    /** Llamadas filtradas, de la más reciente a la más antigua (números ya enmascarados). */
+    fun calls(context: Context): List<JSONObject> = read(context, CALLS).reversed()
+
     data class Summary(
         val calls: Int,
         val has: Int,

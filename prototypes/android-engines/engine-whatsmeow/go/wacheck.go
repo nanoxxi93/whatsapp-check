@@ -160,6 +160,14 @@ func (e *Engine) IsLinked() bool {
 	return e.client.Store.ID != nil
 }
 
+// LinkedPhone devuelve los dígitos del número de la cuenta vinculada (p. ej. "51987654321"), o "" si no hay sesión.
+func (e *Engine) LinkedPhone() string {
+	if id := e.client.Store.ID; id != nil {
+		return id.User
+	}
+	return ""
+}
+
 // IsConnected indica si la conexión está abierta y con sesión iniciada.
 func (e *Engine) IsConnected() bool {
 	return e.client.IsConnected() && e.client.IsLoggedIn()

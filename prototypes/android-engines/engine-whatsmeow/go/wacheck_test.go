@@ -23,6 +23,9 @@ func TestNewEngineSinSesion(t *testing.T) {
 	if got := e.State(); got != StateUnlinked {
 		t.Fatalf("estado = %q, se esperaba %q", got, StateUnlinked)
 	}
+	if got := e.LinkedPhone(); got != "" {
+		t.Fatalf("sin sesión, LinkedPhone debería ser vacío, dio %q", got)
+	}
 	if err := e.Connect(1000); err == nil || !strings.Contains(err.Error(), "no hay ninguna sesión") {
 		t.Fatalf("Connect sin sesión debería fallar con un mensaje claro, dio: %v", err)
 	}

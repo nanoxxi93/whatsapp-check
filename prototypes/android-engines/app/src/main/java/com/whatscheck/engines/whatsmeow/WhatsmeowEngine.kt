@@ -44,6 +44,17 @@ class WhatsmeowEngine(private val dataDir: File) : WhatsAppPresenceEngine {
 
     override suspend fun isLinked(): Boolean = withContext(Dispatchers.IO) { engine().isLinked() }
 
+    /**
+     * Carga el motor (en segundo plano) y publica el estado real de la sesión. Sin esto, la pantalla veía el
+     * valor inicial UNLINKED aunque hubiera una sesión guardada, porque el motor se crea bajo demanda.
+     */
+    suspend fun refresh(): SessionState = withContext(Dispatchers.IO) {
+        parseState(engine().state()).also { state.value = it }
+    }
+
+    /** Dígitos del número vinculado ("" si no hay sesión). Solo para mostrar en el teléfono del usuario. */
+    suspend fun linkedPhone(): String = withContext(Dispatchers.IO) { engine().linkedPhone() }
+
     override suspend fun requestPairingCode(phoneE164Digits: String): String = withContext(Dispatchers.IO) {
         val e = engine()
         state.value = SessionState.CONNECTING

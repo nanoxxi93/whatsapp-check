@@ -12,8 +12,8 @@ android {
         applicationId = "com.whatscheck.engines"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
         // El .aar de whatsmeow solo trae arm64-v8a (los dos teléfonos de prueba son arm64)
         ndk { abiFilters += "arm64-v8a" }
     }
@@ -28,7 +28,10 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    buildFeatures { compose = true }
+    buildFeatures {
+        compose = true
+        buildConfig = true
+    }
 }
 
 kotlin {
@@ -45,4 +48,5 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.compose.ui)
     implementation(libs.compose.material3)
+    implementation(libs.compose.icons.core)
 }

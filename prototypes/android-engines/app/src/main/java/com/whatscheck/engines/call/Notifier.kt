@@ -7,6 +7,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import com.whatscheck.engines.MainActivity
+import com.whatscheck.engines.R
 
 /** Canales y notificaciones: resultado de la llamada (heads-up, RF-05) y servicio "siempre activo" (RF-08). */
 object Notifier {
@@ -37,7 +38,7 @@ object Notifier {
     fun result(context: Context, text: String) {
         ensureChannels(context)
         val n = Notification.Builder(context, CHANNEL_RESULT)
-            .setSmallIcon(android.R.drawable.sym_call_incoming)
+            .setSmallIcon(R.drawable.ic_stat_whatscheck)
             .setContentTitle("WhatsCheck")
             .setContentText(text)
             .setCategory(Notification.CATEGORY_STATUS)
@@ -51,7 +52,7 @@ object Notifier {
     fun service(context: Context): Notification {
         ensureChannels(context)
         return Notification.Builder(context, CHANNEL_SERVICE)
-            .setSmallIcon(android.R.drawable.ic_menu_call)
+            .setSmallIcon(R.drawable.ic_stat_whatscheck)
             .setContentTitle("WhatsCheck activo")
             .setContentText("Revisa si las llamadas de desconocidos tienen WhatsApp")
             .setOngoing(true)
