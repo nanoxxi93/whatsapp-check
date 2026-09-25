@@ -47,18 +47,8 @@ No existe una API oficial de Meta para consultar si un número arbitrario tiene 
 **Decisión (2026-09-23):** **whatsmeow (F4)**. En Android (Moto G53 con wifi y Poco M5s con 4G) vinculó por código y tuvo, en frío, un total p95 de **2,15 s con datos móviles** y 0/20 sin verificar; agrega 17,2 MB al APK (6,4 MB comprimido), alineado a 16 KB ([comparación](../2026-09-23-comparar-motores-android/validation.md)). El motor queda detrás de `WhatsAppPresenceEngine`.
 
 ### Configuración obligatoria de la sesión
-Sea cual sea el motor, la sesión vinculada debe:
 
-| Requisito | Motivo |
-|---|---|
-| Vincular por **código de emparejamiento**, no por QR | El usuario no puede escanear un QR en su propia pantalla |
-| **No** marcarse "en línea" al conectar (whatsmeow: nunca llamar a `SendPresence`) | No cambiar lo que ven los contactos ni silenciar las notificaciones del teléfono principal. **Verificado en dispositivo (2026-09-23):** sin "en línea", dos checks grises y notificaciones normales, con la sesión conectada 3 min y en conexiones cortas ([efectos](../2026-09-23-efectos-whatsapp-principal/validation.md)) |
-| **No** sincronizar el historial de chats | Privacidad, menos datos y conexión más rápida |
-| **No** enviar confirmaciones de lectura ni de entrega de lectura | No alterar el WhatsApp del usuario |
-| Descartar todo mensaje entrante sin guardarlo | Solo se usa la sesión para consultar números |
-| El dispositivo aparece como **"Google Chrome (WhatsCheck)"**: nombre del código de emparejamiento = un valor común válido (`"Chrome (Linux)"`) y sistema operativo del registro = `"WhatsCheck"` (`store.SetOSInfo` en whatsmeow) | El usuario reconoce el dispositivo en *Dispositivos vinculados*. WhatsApp valida el nombre del código pero muestra el sistema operativo del registro ([IF-009](intentos-fallidos.md#if-009--vincular-con-un-sistema-operativo-inventado-en-browser)) |
-| **Minimización de datos:** la sesión no guarda la agenda, los ajustes de chats ni los secretos de mensajes (stores vacíos en whatsmeow y limpieza al abrir); solo sesiones cifradas, llaves y el estado mínimo del protocolo | La app solo necesita saber si un número tiene WhatsApp. Verificado en dispositivo: esas tablas quedan en 0 y el texto de los mensajes no aparece en la base |
-| Credenciales cifradas con **Android Keystore** y excluidas del backup | Nunca salen del teléfono |
+Las reglas innegociables de minimización de datos, privacidad y comportamiento pasivo están descritas en [constitution.md](constitution.md). Aquí solo se detalla el motor elegido (whatsmeow).
 
 ### Contrato de la consulta (`onWhatsApp` de Baileys)
 
@@ -133,9 +123,8 @@ interface WhatsAppPresenceEngine {
 **Provisional:** bajo demanda + un `WorkManager` periódico (p. ej. cada 24 h) que reconecta brevemente para mantener viva la sesión y detectar si fue desvinculada. En la Fase 0 se mide la latencia real de "conexión en frío + consulta".
 
 ### Sin backend
-No hay servidor en el MVP. Lo único remoto es **Firebase Remote Config**, que se usa como:
-- **Interruptor de emergencia (kill switch):** si se detecta una ola de baneos, se desactiva la verificación en todas las instalaciones sin publicar una versión nueva.
-- **Versión mínima del motor:** obliga a actualizar cuando WhatsApp cambia el protocolo.
+
+Regla estricta definida en [constitution.md](constitution.md). Solo se usa Firebase Remote Config para un kill switch.
 
 ## 4. App Android
 
@@ -221,3 +210,4 @@ Actualizar rápido es crítico: cuando WhatsApp cambia el protocolo, **todos** l
 | La sesión vinculada cambia el comportamiento del WhatsApp principal (notificaciones, "en línea") | Medio | Configuración obligatoria de la sección 2; validarlo en la Fase 0 |
 | Optimizaciones de batería de fabricantes (MIUI, One UI) | Medio | Guía de onboarding por fabricante; pruebas en dispositivos reales |
 | Límite de 4 dispositivos vinculados por cuenta | Bajo | Detectarlo al vincular y explicar al usuario |
+

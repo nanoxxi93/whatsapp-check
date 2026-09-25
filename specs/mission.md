@@ -68,19 +68,11 @@ Por eso el aviso dice *"Este número no tiene WhatsApp"*, nunca *"Esto es SPAM"*
 
 ## Qué NO es este producto (fuera de alcance)
 
-- No es un bloqueador agresivo por defecto: nunca rechaza llamadas sin consentimiento explícito.
-- **No lee, guarda, muestra ni envía mensajes de WhatsApp.** La sesión vinculada se usa solo para consultar si un número existe. Cualquier mensaje que llegue a la sesión se descarta sin procesarlo.
-- **No altera el WhatsApp del usuario:** no lo muestra "en línea", no envía confirmaciones de lectura y no sincroniza el historial de chats.
-- No muestra foto de perfil, nombre, "última conexión" ni ningún otro dato del perfil de WhatsApp del tercero. Solo el booleano "tiene / no tiene" (ver decisión abierta sobre cuentas Business en el roadmap).
-- No es un marcador (dialer) de reemplazo.
+Ver los apartados de **Minimización de Datos** y **Comportamiento Pasivo** en [constitution.md](constitution.md).
 
 ## Principios de diseño
 
-1. **Nunca estorbar la llamada.** Si hay duda entre mostrar algo o no molestar, no molestar.
-2. **Fallar en silencio.** Sin red, sin sesión o con timeout → estado "no verificado", nunca un falso "sin WhatsApp".
-3. **Lo del usuario se queda en su teléfono.** Las credenciales de la sesión vinculada se cifran con Android Keystore y nunca salen del dispositivo. No hay servidor que las reciba.
-4. **Transparencia sobre el riesgo.** Antes de vincular, el usuario lee en lenguaje claro que la app usa un método **no oficial** de WhatsApp y que existe el riesgo de que su cuenta sea restringida o suspendida. Solo continúa si lo acepta de forma explícita.
-5. **Honestidad en la señal.** El texto del aviso describe un hecho, no un veredicto.
+Están definidos como reglas estrictas en el apartado **Principios de Experiencia de Usuario (UX)** de [constitution.md](constitution.md).
 
 ## Métricas de éxito
 
@@ -99,3 +91,4 @@ Por eso el aviso dice *"Este número no tiene WhatsApp"*, nunca *"Esto es SPAM"*
 - No exige subir la agenda de contactos del usuario a ningún servidor.
 - No hay servidor central: sin costos por consulta y sin base de datos de números de terceros.
 - Complementario, no sustituto: puede convivir con el identificador de spam del sistema.
+

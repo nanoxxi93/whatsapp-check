@@ -2,8 +2,9 @@
 
 App Android que, al entrar una llamada de un número desconocido, verifica si tiene WhatsApp (con la cuenta del propio usuario vinculada como dispositivo) y muestra un aviso sin bloquear la llamada.
 
-- Producto: `specs/product/mission.md`, `specs/product/tech-stack.md`, `specs/product/roadmap.md`.
-- Specs por ítem del roadmap: `specs/AAAA-MM-DD-<nombre>/` (`requirements.md`, `plan.md`, `validation.md`). Se crean con la skill `/roadmap-spec`.
+- **Spec-Driven Development (SDD)**: El proyecto sigue estrictamente el ciclo de SDD. Todo desarrollo pasa por las skills en `.claude/skills/` (`specify` → `clarify` → `plan` → `tasks` → `checklist` → `analyze` → `implement` → `close` → `publish`).
+- **Base del Producto**: `specs/mission.md`, `specs/tech-stack.md`, `specs/roadmap.md`. Siempre consúltalos.
+- **Specs por funcionalidad**: `specs/AAAA-MM-DD-<nombre>/` generadas por las skills.
 - Idioma de la documentación: español. Finales de línea: LF.
 
 ## Registros que se mantienen mientras se trabaja
@@ -15,7 +16,7 @@ Agrega una entrada **en el mismo turno** en que termines un cambio que afecte al
 - Una línea por cambio, desde el punto de vista de quien lee el proyecto, no la lista de archivos tocados. Enlaza la spec si la hay.
 - No registres ediciones menores sin efecto (typos, formato).
 
-### `specs/product/intentos-fallidos.md` — qué no funcionó
+### `specs/intentos-fallidos.md` — qué no funcionó
 Antes de proponer un enfoque, una librería o una solución a un bug, **busca en este archivo**. Si ya está registrado, no lo repitas salvo que se cumpla su condición de *Reconsiderar si*, y dilo explícitamente.
 
 Agrega una entrada cuando:
