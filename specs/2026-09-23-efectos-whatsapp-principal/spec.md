@@ -2,7 +2,7 @@
 
 > **Estado:** Validado · **Fecha:** 2026-09-23
 > **Ítem del roadmap:** Fase 0 — Efectos secundarios en el WhatsApp principal (`S`)
-> **Relacionado:** [plan.md](plan.md) · [validation.md](validation.md) · [roadmap](../product/roadmap.md) · [tech-stack §2](../product/tech-stack.md#configuración-obligatoria-de-la-sesión)
+> **Relacionado:** [plan.md](plan.md) · [checklist.md](checklist.md) · [roadmap](../product/roadmap.md) · [tech-stack §2](../product/tech-stack.md#configuración-obligatoria-de-la-sesión)
 
 ## Objetivo
 

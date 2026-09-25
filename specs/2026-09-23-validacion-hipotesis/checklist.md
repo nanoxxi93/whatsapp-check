@@ -1,7 +1,7 @@
 # Validación — Validación de la hipótesis
 
 > **Estado:** Descartado (2026-09-23) · **Fecha:** 2026-09-23
-> **Relacionado:** [requirements.md](requirements.md) · [plan.md](plan.md)
+> **Relacionado:** [spec.md](spec.md) · [plan.md](plan.md)
 
 ## Criterios de aceptación
 
@@ -16,7 +16,7 @@
 | CA-07 | RF-05 | El veredicto sigue la tabla Go / No-Go para casos límite (60 %, 85 %, n = 29 / 30). | Test | Sí |
 | CA-08 | RF-06 | La precisión estimada coincide con el cálculo manual para un caso conocido. | Test | No |
 | CA-09 | RF-07 | Con `--business`, los registros con WhatsApp tienen `isBusiness` `true`/`false`/`null`, los demás `null`, y el JSONL no contiene nombre, descripción ni foto. | Manual + revisión del JSONL | No (solo si se aprueba RF-07) |
-| CA-10 | RNF-01 | `git status` no muestra `data/` ni `results/`; `validation.md` y el CHANGELOG no contienen números de teléfono. | Comando + `git grep` | Sí |
+| CA-10 | RNF-01 | `git status` no muestra `data/` ni `results/`; `checklist.md` y el CHANGELOG no contienen números de teléfono. | Comando + `git grep` | Sí |
 | CA-11 | Objetivo | Existe un resultado **definitivo** con n ≥ 30 en `spam` y en `legitimo`, registrado abajo con su veredicto. | `analyze` | Sí |
 
 ## Criterios Go / No-Go

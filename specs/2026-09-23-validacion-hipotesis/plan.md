@@ -1,7 +1,7 @@
 # Plan — Validación de la hipótesis
 
 > **Estado:** Descartado (2026-09-23) · **Fecha:** 2026-09-23
-> **Relacionado:** [requirements.md](requirements.md) · [validation.md](validation.md) · [tech-stack](../product/tech-stack.md)
+> **Relacionado:** [spec.md](spec.md) · [checklist.md](checklist.md) · [tech-stack](../product/tech-stack.md)
 
 ## Enfoque
 
@@ -10,7 +10,7 @@ Es un **experimento** con dos partes:
 1. **Herramienta:** extender `prototypes/baileys-cli` con etiquetas validadas, `phoneId`, deduplicación y un comando `analyze`. La lógica estadística va en funciones puras con tests.
 2. **Recolección:** el autor etiqueta las llamadas y las consulta en lotes pequeños durante unos días, hasta llegar a ≥ 30 números por grupo. Se corre `analyze` sobre el primer lote (resultado preliminar) y al final (resultado definitivo).
 
-**Hipótesis:** entre números desconocidos, los de `spam` tienen WhatsApp con mucha menos frecuencia que los `legitimo`. Umbrales en [validation.md](validation.md#criterios-go--no-go).
+**Hipótesis:** entre números desconocidos, los de `spam` tienen WhatsApp con mucha menos frecuencia que los `legitimo`. Umbrales en [checklist.md](checklist.md#criterios-go--no-go).
 
 ## Diseño
 
@@ -42,19 +42,7 @@ data/*.csv (número,etiqueta) ──check──► results/AAAA-MM-DD.jsonl (pho
 | El veredicto lo deciden los peores criterios | Promedio | Coherente con el prototipo: una señal que falla en un grupo no sirve aunque el otro salga bien |
 | `contacto` solo como referencia | Usarlo como grupo legítimo | La app no se activa con contactos guardados y casi todos tienen WhatsApp: sesgaría la especificidad hacia arriba |
 
-## Tareas
 
-- [ ] **T1** — `labels.ts` + validación en `readTargets` (etiqueta inválida → aviso y se omite) + deduplicación por número normalizado; tests. · cubre `RF-01`, `RF-03`
-- [ ] **T2** — `phone-id.ts` (secreto generado la primera vez) + `phoneId` en cada registro; tests (estable, distinto para números distintos, sin colisiones en el rango `93696…`). · cubre `RF-02`, `RNF-03`
-- [ ] **T3** — `analysis.ts`: Wilson, agrupación, último resultado por `phoneId`, sensibilidad, especificidad, precisión estimada y veredicto; tests con casos conocidos y bordes. · cubre `RF-04`, `RF-05`, `RF-06`, `RNF-04`
-- [ ] **T4** — Comando `analyze [--since AAAA-MM-DD]` con tabla y veredicto. · cubre `RF-04`, `RF-05`, `RF-06`
-- [ ] **T5** — `check --business` (si se aprueba RF-07). · cubre `RF-07`
-- [ ] **T6** — README: formato de datos, etiquetas, cómo recolectar, `analyze`.
-- [ ] **T7** — **Lote preliminar:** el autor etiqueta los 23 números del primer lote → `check --file data/llamadas-recibidas.csv` → `analyze`. Resultado preliminar en validation.md (solo cifras). · Requiere al autor
-- [ ] **T8** — **Recolección:** el autor agrega llamadas nuevas y el grupo `legitimo` hasta ≥ 30 por grupo; ≤ 1 lote por día. · Requiere al autor
-- [ ] **T9** — `analyze` final → veredicto en validation.md; actualizar la hipótesis en `mission.md` con los datos (con aprobación). · cubre objetivo del ítem
-
-## Riesgos
 
 | Riesgo | Mitigación |
 |---|---|
@@ -66,3 +54,4 @@ data/*.csv (número,etiqueta) ──check──► results/AAAA-MM-DD.jsonl (pho
 ## Cambios a documentos base
 
 - `mission.md` → *Hipótesis central*: agregar los resultados medidos (sensibilidad, especificidad, n, fecha) cuando exista el veredicto final. Se aplica solo con aprobación.
+

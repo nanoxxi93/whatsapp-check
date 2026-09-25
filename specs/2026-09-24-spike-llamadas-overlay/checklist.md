@@ -1,7 +1,7 @@
 # Validación — Spike de `CallScreeningService` + overlay
 
 > **Estado:** En progreso · **Fecha:** 2026-09-24
-> **Relacionado:** [requirements.md](requirements.md) · [plan.md](plan.md)
+> **Relacionado:** [spec.md](spec.md) · [plan.md](plan.md)
 
 ## Criterios de aceptación
 

@@ -1,7 +1,7 @@
 # Validación — Comparar motores en Android
 
 > **Estado:** Validado · **Fecha:** 2026-09-23
-> **Relacionado:** [requirements.md](requirements.md) · [plan.md](plan.md)
+> **Relacionado:** [spec.md](spec.md) · [plan.md](plan.md)
 
 ## Criterios de aceptación
 

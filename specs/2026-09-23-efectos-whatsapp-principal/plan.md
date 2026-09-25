@@ -1,7 +1,7 @@
 # Plan — Efectos secundarios en el WhatsApp principal
 
 > **Estado:** Validado · **Fecha:** 2026-09-23
-> **Relacionado:** [requirements.md](requirements.md) · [validation.md](validation.md) · [tech-stack](../product/tech-stack.md)
+> **Relacionado:** [spec.md](spec.md) · [checklist.md](checklist.md) · [tech-stack](../product/tech-stack.md)
 
 ## Enfoque
 
@@ -45,15 +45,7 @@ Preparación: en el WhatsApp del secundario, *Privacidad → Últ. vez y en lín
 | Contar eventos por tipo, sin contenido | Registrar los eventos | Cumple "no guarda mensajes" incluso en los logs de prueba |
 | Reemplazar los stores de contactos, ajustes de chats y secretos de mensajes por versiones vacías, y vaciar esas tablas al abrir | Desactivar la sincronización del estado de la app | whatsmeow no tiene opción para no sincronizarlo: se dispara cuando el teléfono comparte las llaves. El store es intercambiable (`store.Device`), así que se descartan los datos en lugar de guardarlos. Las sesiones cifradas se conservan: sin ellas no hay confirmación de entrega y el remitente reintenta |
 
-## Tareas
 
-- [x] **T1** — Go: `Hold(seconds)` con contador de eventos por tipo y `TableCounts()`; tests con un store vacío; regenerar el `.aar`. · cubre `RF-01`, `RF-02`
-- [x] **T2** — `BenchActivity`: acciones `hold` y `stats`; instalar en el Poco. · cubre `RF-01`, `RF-02`
-- [x] **T3** — Verificar que la sesión del Poco responde y hacer un `stats` inicial. · cubre `RF-02`
-- [x] **T4** — Protocolo A–E con el autor. *(requiere al autor)* · cubre `RF-03`, `RF-04`
-- [x] **T5** — Si alguna tabla guarda datos personales o mensajes: revisar las opciones de whatsmeow para evitarlo (RF-05); si hay efectos en el WhatsApp principal, registrarlos en `intentos-fallidos.md` y proponer mitigación. · cubre `RF-05`
-
-## Riesgos
 
 | Riesgo | Mitigación |
 |---|---|
@@ -65,3 +57,4 @@ Preparación: en el WhatsApp del secundario, *Privacidad → Últ. vez y en lín
 
 - **Aprobado y aplicado (2026-09-24):** `tech-stack.md` §2, requisito de no marcarse "en línea" marcado como **verificado en dispositivo**.
 - **Aprobado y aplicado (2026-09-24):** fila de **minimización de datos** en tech-stack §2.
+

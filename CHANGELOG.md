@@ -30,7 +30,7 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 #### Añadido
 - Constitución del producto en `specs/`: `mission.md`, `tech-stack.md` y `roadmap.md`.
 - Contrato de `onWhatsApp` de Baileys y su traducción a `CheckResult` en `tech-stack.md`.
-- Skill `/roadmap-spec` en `.claude/skills/roadmap-spec/` para convertir cada ítem del roadmap en una spec (`specs/AAAA-MM-DD-<nombre>/` con `requirements.md`, `plan.md` y `validation.md`).
+- Skill `/roadmap-spec` en `.claude/skills/roadmap-spec/` para convertir cada ítem del roadmap en una spec (`specs/AAAA-MM-DD-<nombre>/` con `spec.md`, `plan.md` y `checklist.md`).
 - `CHANGELOG.md` (este archivo) y `specs/intentos-fallidos.md` para registrar lo que se probó y no funcionó.
 - `CLAUDE.md` con las reglas para mantener ambos registros al día.
 - Spec del prototipo de escritorio con Baileys ([specs/2026-09-23-prototipo-baileys-escritorio](specs/2026-09-23-prototipo-baileys-escritorio/)).
@@ -39,15 +39,15 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 - App Android de pruebas `prototypes/android-engines/` (Gradle 8.14.3, AGP 8.13.2, Kotlin 2.2.20, Compose): módulo `engine-api` con `WhatsAppPresenceEngine` y el contrato `toCheckResult` portado a Kotlin (11 tests), y pantalla para vincular, consultar y desvincular.
 - Motor **whatsmeow (F4)** en la app de pruebas: módulo Go `wacheck` (vincular por código, `IsOnWhatsApp`, cerrar, desvincular) compilado con `gomobile` (`engine-whatsmeow/build-aar.sh`), con 3 tests de Go; agrega 17,2 MB al APK.
 - Spec de los efectos secundarios en el WhatsApp principal ([specs/2026-09-23-efectos-whatsapp-principal](specs/2026-09-23-efectos-whatsapp-principal/)): observación con WhatsApp Web ("en línea", checks, notificaciones, no leídos) e inspección de la base local.
-- Efectos en el WhatsApp principal verificados con WhatsApp real: con whatsmeow conectado (3 min y 5 conexiones cortas) el número **no aparece "en línea"**, los mensajes quedan en **doble check gris**, **llegan las notificaciones** y siguen **sin leer**; el texto de los mensajes **no queda en la base** ([validación](specs/2026-09-23-efectos-whatsapp-principal/validation.md)).
+- Efectos en el WhatsApp principal verificados con WhatsApp real: con whatsmeow conectado (3 min y 5 conexiones cortas) el número **no aparece "en línea"**, los mensajes quedan en **doble check gris**, **llegan las notificaciones** y siguen **sin leer**; el texto de los mensajes **no queda en la base** ([validación](specs/2026-09-23-efectos-whatsapp-principal/checklist.md)).
 - Acciones de prueba `hold` y `stats` en la app de pruebas.
 - Entrada IF-014: para observar efectos hacen falta un número sin otros clientes activos, un observador con su "última vez" visible y un control positivo.
-- Ítem del roadmap **"Comparar motores en Android" validado y cerrado**: motor elegido whatsmeow ([validación](specs/2026-09-23-comparar-motores-android/validation.md)).
+- Ítem del roadmap **"Comparar motores en Android" validado y cerrado**: motor elegido whatsmeow ([validación](specs/2026-09-23-comparar-motores-android/checklist.md)).
 - Mediciones en Android con whatsmeow: p95 en frío **2,31 s** con wifi (Moto G53) y **2,15 s** con 4G (Poco M5s), 0/40 sin verificar. `bench.sh` y `BenchActivity` para medir en frío desde la PC.
 - Entradas IF-012 (Baileys 7 en Node 18 necesita WebCrypto global) e IF-013 (Baileys + `nodejs-mobile` descartado: tamaño y páginas de 16 KB).
 - Entrada IF-011 en `intentos-fallidos.md`: Cobalt (F2) descartado por exigir Java 25 y binarios nativos descargables.
 - Ítem del roadmap **"Prototipo de escritorio con Baileys" validado y cerrado** (todos los criterios obligatorios pasaron).
-- Resultados del prototipo con número secundario: vinculación por código ✅; conexión en frío + consulta **p95 2,36 s** en 20 corridas, sin fallos → **Go "bajo demanda"** en escritorio ([validación](specs/2026-09-23-prototipo-baileys-escritorio/validation.md)).
+- Resultados del prototipo con número secundario: vinculación por código ✅; conexión en frío + consulta **p95 2,36 s** en 20 corridas, sin fallos → **Go "bajo demanda"** en escritorio ([validación](specs/2026-09-23-prototipo-baileys-escritorio/checklist.md)).
 - Entrada IF-010 en `intentos-fallidos.md` (cierre del WebSocket de Baileys antes de salir).
 - IF-009 con causa documentada: con código de emparejamiento WhatsApp solo acepta nombres `Navegador (Sistema)` comunes.
 - Entradas IF-008 (credenciales a medias tras una vinculación fallida) e IF-009 (sistema operativo inventado en la identidad del dispositivo) en `intentos-fallidos.md`.

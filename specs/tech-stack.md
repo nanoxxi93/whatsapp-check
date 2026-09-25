@@ -44,7 +44,7 @@ No existe una API oficial de Meta para consultar si un número arbitrario tiene 
 | ✅ **F4. whatsmeow (Go) + `gomobile` — ELEGIDA** | Madura y muy activa (base del puente de WhatsApp de Matrix); `PairPhone` con nombre visible e `IsOnWhatsApp`; binario nativo sin runtime de JS | Puente Go ↔ Kotlin; licencia MPL-2.0 (revisar en la revisión legal); sesión en SQLite |
 | F3. Implementación propia mínima en Kotlin | Control total, solo lo necesario | Mucho trabajo criptográfico (Noise, emparejamiento); último recurso |
 
-**Decisión (2026-09-23):** **whatsmeow (F4)**. En Android (Moto G53 con wifi y Poco M5s con 4G) vinculó por código y tuvo, en frío, un total p95 de **2,15 s con datos móviles** y 0/20 sin verificar; agrega 17,2 MB al APK (6,4 MB comprimido), alineado a 16 KB ([comparación](../2026-09-23-comparar-motores-android/validation.md)). El motor queda detrás de `WhatsAppPresenceEngine`.
+**Decisión (2026-09-23):** **whatsmeow (F4)**. En Android (Moto G53 con wifi y Poco M5s con 4G) vinculó por código y tuvo, en frío, un total p95 de **2,15 s con datos móviles** y 0/20 sin verificar; agrega 17,2 MB al APK (6,4 MB comprimido), alineado a 16 KB ([comparación](../2026-09-23-comparar-motores-android/checklist.md)). El motor queda detrás de `WhatsAppPresenceEngine`.
 
 ### Configuración obligatoria de la sesión
 

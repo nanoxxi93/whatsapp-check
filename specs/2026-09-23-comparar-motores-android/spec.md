@@ -2,7 +2,7 @@
 
 > **Estado:** Validado · **Fecha:** 2026-09-23
 > **Ítem del roadmap:** Fase 0 — Comparar motores en Android (`L`)
-> **Relacionado:** [plan.md](plan.md) · [validation.md](validation.md) · [roadmap](../product/roadmap.md) · [tech-stack §2](../product/tech-stack.md#motor-de-protocolo-en-el-dispositivo-)
+> **Relacionado:** [plan.md](plan.md) · [checklist.md](checklist.md) · [roadmap](../product/roadmap.md) · [tech-stack §2](../product/tech-stack.md#motor-de-protocolo-en-el-dispositivo-)
 
 ## Objetivo
 
@@ -10,7 +10,7 @@ Elegir, con mediciones en un teléfono Android real, el motor que implementará 
 
 ## Contexto
 
-- En escritorio, Baileys 7 ya mostró que la idea funciona: vinculación por código ✅ y conexión en frío + consulta p95 2,36 s ([prototipo](../2026-09-23-prototipo-baileys-escritorio/validation.md)). Pero **solo cargar Baileys tarda 1,4–1,9 s** y eso no entraba en esa medición: en Android el arranque del motor cuenta.
+- En escritorio, Baileys 7 ya mostró que la idea funciona: vinculación por código ✅ y conexión en frío + consulta p95 2,36 s ([prototipo](../2026-09-23-prototipo-baileys-escritorio/checklist.md)). Pero **solo cargar Baileys tarda 1,4–1,9 s** y eso no entraba en esa medición: en Android el arranque del motor cuenta.
 - Candidatos revisados el 2026-09-23:
 
 | Motor | Estado | Riesgo principal |

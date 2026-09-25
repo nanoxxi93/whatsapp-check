@@ -2,7 +2,7 @@
 
 > **Estado:** Descartado (2026-09-23) · **Fecha:** 2026-09-23
 > **Ítem del roadmap:** Fase 0 — Validación de la hipótesis (`M`)
-> **Relacionado:** [plan.md](plan.md) · [validation.md](validation.md) · [roadmap](../product/roadmap.md) · [misión](../product/mission.md#qué-informa-la-app-y-qué-no)
+> **Relacionado:** [plan.md](plan.md) · [checklist.md](checklist.md) · [roadmap](../product/roadmap.md) · [misión](../product/mission.md#qué-informa-la-app-y-qué-no)
 
 ## Motivo del descarte
 
@@ -33,7 +33,7 @@ Medir con llamadas reales si **"no tiene WhatsApp"** separa las llamadas no dese
 | RF-02 | Cada registro del JSONL lleva un `phoneId` estable y no reversible (HMAC-SHA256 del número con un secreto local), para agrupar y deduplicar sin guardar el número. El enmascarado actual colisiona dentro de un mismo rango: `+5193*****17`. | Obligatorio |
 | RF-03 | `check` elimina duplicados dentro del mismo archivo (el mismo número pudo llamar varias veces). | Obligatorio |
 | RF-04 | Comando `analyze`: lee los resultados JSONL, toma el resultado más reciente por `phoneId` y muestra por etiqueta: n, con WhatsApp, sin WhatsApp, no verificados, y el % sin WhatsApp con intervalo de confianza del 95 % (Wilson). | Obligatorio |
-| RF-05 | `analyze` calcula **sensibilidad** (% de `spam` sin WhatsApp), **especificidad** (% de `legitimo` con WhatsApp) y el **veredicto Go / No-Go** de [validation.md](validation.md). Los `UNKNOWN` se excluyen del cálculo y se informan aparte. | Obligatorio |
+| RF-05 | `analyze` calcula **sensibilidad** (% de `spam` sin WhatsApp), **especificidad** (% de `legitimo` con WhatsApp) y el **veredicto Go / No-Go** de [checklist.md](checklist.md). Los `UNKNOWN` se excluyen del cálculo y se informan aparte. | Obligatorio |
 | RF-06 | `analyze` estima la **precisión del aviso** (de los "⚠️ sin WhatsApp", cuántos son spam) con la proporción de spam observada en las llamadas del autor. | Deseable |
 | RF-07 | Opción `check --business`: para los números con WhatsApp, consultar si es una cuenta **Business** y guardar solo el booleano `isBusiness` en el JSONL. Nunca nombre, foto ni descripción. Mide cuántas llamadas comerciales esquivan la señal usando WhatsApp Business. | Deseable |
 
@@ -41,7 +41,7 @@ Medir con llamadas reales si **"no tiene WhatsApp"** separa las llamadas no dese
 
 | ID | Requisito | Métrica |
 |---|---|---|
-| RNF-01 | **Números reales fuera de git.** | `data/` en `.gitignore`; en `validation.md` y en el CHANGELOG solo van cifras agregadas, sin números |
+| RNF-01 | **Números reales fuera de git.** | `data/` en `.gitignore`; en `checklist.md` y en el CHANGELOG solo van cifras agregadas, sin números |
 | RNF-02 | **Protección de la cuenta.** Se mantienen los topes del prototipo. | Máx. 50 números por ejecución, pausas de 3–6 s; se recomienda ≤ 1 lote por día |
 | RNF-03 | **`phoneId` no reversible.** | Secreto aleatorio de 32 bytes en `data/.phone-id-secret`, generado la primera vez; ID de 16 caracteres hex |
 | RNF-04 | Lógica de análisis (Wilson, sensibilidad, especificidad, veredicto, deduplicación) cubierta por tests. | Todos los casos del veredicto y bordes (n = 0, 0 %, 100 %) |

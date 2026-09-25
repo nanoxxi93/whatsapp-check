@@ -2,7 +2,7 @@
 
 > **Estado:** Validado · **Fecha:** 2026-09-23
 > **Ítem del roadmap:** Fase 0 — Prototipo de escritorio con Baileys (`S`)
-> **Relacionado:** [plan.md](plan.md) · [validation.md](validation.md) · [roadmap](../product/roadmap.md)
+> **Relacionado:** [plan.md](plan.md) · [checklist.md](checklist.md) · [roadmap](../product/roadmap.md)
 
 ## Objetivo
 

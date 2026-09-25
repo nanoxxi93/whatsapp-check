@@ -2,7 +2,7 @@
 
 > **Estado:** En progreso · **Fecha:** 2026-09-24
 > **Ítem del roadmap:** Fase 0 — Spike de `CallScreeningService` + overlay (`M`)
-> **Relacionado:** [plan.md](plan.md) · [validation.md](validation.md) · [roadmap](../product/roadmap.md) · [tech-stack §1 y §3](../product/tech-stack.md#3-arquitectura-general)
+> **Relacionado:** [plan.md](plan.md) · [checklist.md](checklist.md) · [roadmap](../product/roadmap.md) · [tech-stack §1 y §3](../product/tech-stack.md#3-arquitectura-general)
 
 ## Objetivo
 
@@ -10,7 +10,7 @@ Demostrar en los teléfonos reales del autor el flujo completo del producto: **e
 
 ## Contexto
 
-- El motor está elegido y medido: whatsmeow, total en frío p95 **2,15 s** con 4G ([comparación](../2026-09-23-comparar-motores-android/validation.md)). No altera el WhatsApp del usuario ([efectos](../2026-09-23-efectos-whatsapp-principal/validation.md)).
+- El motor está elegido y medido: whatsmeow, total en frío p95 **2,15 s** con 4G ([comparación](../2026-09-23-comparar-motores-android/checklist.md)). No altera el WhatsApp del usuario ([efectos](../2026-09-23-efectos-whatsapp-principal/checklist.md)).
 - Arquitectura prevista en [tech-stack §3](../product/tech-stack.md#3-arquitectura-general): `CallScreeningService` → `respondToCall(allow)` inmediato → verificación → aviso. Android da ~5 s para responder; responder primero evita ese límite.
 - Teléfonos: **Poco M5s** (Android 13, MIUI 14), donde **entran las llamadas del autor** y ya está vinculada la sesión de whatsmeow, y **Moto G53** (Android 14), que tiene el WhatsApp del número secundario y sirve para llamar al Poco.
 - MIUI tiene permisos propios además de los de Android: *"Mostrar ventanas emergentes mientras se ejecuta en segundo plano"*, *"Mostrar en pantalla de bloqueo"* y *"Inicio automático"*. Pueden impedir el aviso aunque Android lo permita.

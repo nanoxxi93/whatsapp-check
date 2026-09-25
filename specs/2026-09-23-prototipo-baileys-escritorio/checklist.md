@@ -1,7 +1,7 @@
 # Validación — Prototipo de escritorio con Baileys
 
 > **Estado:** Validado · **Fecha:** 2026-09-23
-> **Relacionado:** [requirements.md](requirements.md) · [plan.md](plan.md)
+> **Relacionado:** [spec.md](spec.md) · [plan.md](plan.md)
 
 ## Criterios de aceptación
 
@@ -92,7 +92,7 @@ Todas con el **número secundario** del autor, nunca con una cuenta personal.
 | 2026-09-23 | CA-01 (identidad propia) | `unlink` + `link --browser whatscheck` (`['WhatsCheck', 'Google Chrome', '1.0.0']`) | ✅ Vincula | Credenciales nuevas a las 19:34. El teléfono muestra **"Google Chrome (Mac OS)"**, no "WhatsCheck". Ver nota en IF-009 |
 | 2026-09-23 | CA-11 (parte 2) | `unlink` con la sesión activa | ✅ Pasa | "Sesión cerrada en WhatsApp y credenciales borradas". En el teléfono, el dispositivo pasó a **"cierre de sesión pendiente"**: WhatsApp aceptó la desvinculación y la aplica con demora (normal según el autor) |
 | 2026-09-23 | CA-13 (bench y status) | Salidas de `bench` y `status` | ✅ Pasa | Solo `+5192*****19`. Con `check` ya había pasado |
-| 2026-09-23 | — (observación) | ~30 conexiones con la sincronización de historial desactivada | ℹ️ | Ningún error de sesión atribuible a la falta de equivalencias número ↔ LID. Se mantiene desactivada (ver requirements.md) |
+| 2026-09-23 | — (observación) | ~30 conexiones con la sincronización de historial desactivada | ℹ️ | Ningún error de sesión atribuible a la falta de equivalencias número ↔ LID. Se mantiene desactivada (ver spec.md) |
 | 2026-09-23 | CA-14 | `git status` después de usar todos los comandos | ✅ Pasa | No aparecen `.auth/` ni `results/` |
 | 2026-09-23 | — (defecto) | `link` tras un 401 | ❌ → corregido | Respondía "Ya hay una sesión vinculada" porque las credenciales inválidas seguían guardadas. Ahora un 401 las borra solas |
 | 2026-09-23 | — (defecto) | Salida del proceso tras `check` | ❌ → corregido | 1 de ~25 ejecuciones abortó con `Assertion failed … src\win\async.c`. Ver IF-010. Después del arreglo: 5 ejecuciones seguidas con exit 0; `end()` tarda 0,2–0,3 s |

@@ -2,7 +2,7 @@
 
 > **Estado:** Borrador v0.3 · 2026-09-23
 > Referencias: [mission.md](mission.md) · [tech-stack.md](tech-stack.md) · [intentos-fallidos.md](intentos-fallidos.md) · [CHANGELOG](../../CHANGELOG.md)
-> Cada ítem marcado `[ ]` se convierte en su propia spec (`specs/AAAA-MM-DD-<nombre>/` con `requirements.md`, `plan.md` y `validation.md`) antes de implementarse. Usar la skill `/roadmap-spec`.
+> Cada ítem marcado `[ ]` se convierte en su propia spec (`specs/AAAA-MM-DD-<nombre>/` con `spec.md`, `plan.md` y `checklist.md`) antes de implementarse. Usar la skill `/roadmap-spec`.
 > **Cambios v0.2:** verificación con el WhatsApp del propio usuario, dentro del teléfono. Sin backend. iOS descartado.
 > **Cambios v0.3:** la app informa si el número tiene WhatsApp; no detecta spam. Se descartan los ítems que clasificaban llamadas (validación de la hipótesis, feedback de precisión, señales combinadas, reputación colaborativa).
 
@@ -105,7 +105,7 @@
 
 ## Decisiones abiertas
 
-1. ¿Conexión bajo demanda o persistente? → depende de la latencia medida en la **Fase 0**. *Avance 2026-09-23:* en escritorio, conectar en frío + consultar tarda p95 **2,36 s** (Go "bajo demanda", [validación](../2026-09-23-prototipo-baileys-escritorio/validation.md)). *Android (whatsmeow, 2026-09-23):* p95 **2,15 s** con 4G en el Poco M5s y 2,31 s con wifi en el Moto G53, contando el arranque del motor ([comparación](../2026-09-23-comparar-motores-android/validation.md)). La latencia ya no es un obstáculo para "bajo demanda"; falta ver el riesgo de bloqueo de reconectar seguido.
+1. ¿Conexión bajo demanda o persistente? → depende de la latencia medida en la **Fase 0**. *Avance 2026-09-23:* en escritorio, conectar en frío + consultar tarda p95 **2,36 s** (Go "bajo demanda", [validación](../2026-09-23-prototipo-baileys-escritorio/checklist.md)). *Android (whatsmeow, 2026-09-23):* p95 **2,15 s** con 4G en el Poco M5s y 2,31 s con wifi en el Moto G53, contando el arranque del motor ([comparación](../2026-09-23-comparar-motores-android/checklist.md)). La latencia ya no es un obstáculo para "bajo demanda"; falta ver el riesgo de bloqueo de reconectar seguido.
 2. ¿Canal de distribución: Google Play, APK propio o F-Droid? → **Fase 0**.
 3. ¿Mercado de lanzamiento inicial (país)? Afecta el marco legal y el país por defecto para normalizar números.
 4. ¿Mostrar el nombre de la empresa cuando el número es una cuenta WhatsApp Business? Ayudaría con el caso de empresas comerciales que sí tienen WhatsApp, pero choca con el principio de no mostrar datos del perfil.

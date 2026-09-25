@@ -2,7 +2,7 @@
 
 > **Estado:** En progreso · **Fecha:** 2026-09-24
 > **Origen:** pedido directo del autor durante el [spike de llamadas](../2026-09-24-spike-llamadas-overlay/) ("trabajemos de una vez"); no es un ítem del roadmap. Adelanta, en versión de prueba, pantallas de la Fase 1 (ajustes, vinculación) y de la Fase 2 (historial).
-> **Relacionado:** [plan.md](plan.md) · [validation.md](validation.md) · [misión](../product/mission.md)
+> **Relacionado:** [plan.md](plan.md) · [checklist.md](checklist.md) · [misión](../product/mission.md)
 
 ## Objetivo
 

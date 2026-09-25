@@ -1,11 +1,11 @@
 # Plan — Comparar motores en Android
 
 > **Estado:** Validado · **Fecha:** 2026-09-23
-> **Relacionado:** [requirements.md](requirements.md) · [validation.md](validation.md) · [tech-stack](../product/tech-stack.md)
+> **Relacionado:** [spec.md](spec.md) · [checklist.md](checklist.md) · [tech-stack](../product/tech-stack.md)
 
 ## Enfoque
 
-Una **app de pruebas mínima** (no es la app final) con dos implementaciones de `WhatsAppPresenceEngine`. Se empieza por **F4 (whatsmeow)** porque no tiene el bloqueo de versión de Node; después se hace **F1 (Baileys)**, con un plan B acotado si Baileys no corre en Node 18. Las mediciones se hacen en un teléfono real y se comparan con los criterios de [validation.md](validation.md#criterios-go--no-go).
+Una **app de pruebas mínima** (no es la app final) con dos implementaciones de `WhatsAppPresenceEngine`. Se empieza por **F4 (whatsmeow)** porque no tiene el bloqueo de versión de Node; después se hace **F1 (Baileys)**, con un plan B acotado si Baileys no corre en Node 18. Las mediciones se hacen en un teléfono real y se comparan con los criterios de [checklist.md](checklist.md#criterios-go--no-go).
 
 **Hipótesis:** whatsmeow (binario Go nativo) arranca mucho más rápido que Baileys (runtime de Node + carga de módulos JS) y agrega menos MB al APK. Con eso, "bajo demanda" sería viable en Android.
 
@@ -50,18 +50,7 @@ Para la corrida en frío, `bench.sh` (en la PC) hace `am force-stop` de la app y
 | `libgojni.so` sin símbolos (`-trimpath -ldflags="-s -w"`) | Build por defecto | Pasa de 35,5 MB a 17,2 MB; es lo que se usaría en producción |
 | Nombre al vincular `"Chrome (Linux)"` | `"WhatsCheck"` | WhatsApp solo acepta `Navegador (Sistema)` comunes con código de emparejamiento ([IF-009](../product/intentos-fallidos.md#if-009--vincular-con-un-sistema-operativo-inventado-en-browser)) |
 
-## Tareas
 
-- [x] **T1** — Entorno: instalar Go, `gomobile` (`gomobile init`) y el NDK. Verificar `gomobile bind -target=android/arm64` con un paquete de prueba. *(con permiso del autor)*
-- [x] **T2** — Proyecto Android base: Gradle KTS, `engine-api` con `WhatsAppPresenceEngine` y `toCheckResult` + tests JUnit que repiten los casos de `result.test.ts`, y la `MainActivity`. · cubre `RF-01`, `RF-04`
-- [x] **T3** — **F4 whatsmeow:** módulo Go (`Link`/`PairPhone`, `Check`/`IsOnWhatsApp`, `Unlink`, `Close`) con la configuración obligatoria de la sesión; `.aar` con `gomobile bind`; wrapper Kotlin. · cubre `RF-02`, `RF-04`, `RF-07`, `RNF-02`, `RNF-04`
-- [x] **T4** — Bench en proceso `:engine` + medición de `tEngine`/`tReady`/`tQuery`, tamaño del APK y PSS; exportar JSONL. · cubre `RF-05`, `RF-06`, `RF-08`
-- [x] ~~**T5**~~ *(reemplazada 2026-09-23: F1 descartado por análisis con la evidencia de CA-04 y CA-06, [IF-013](../product/intentos-fallidos.md#if-013--motor-baileys--nodejs-mobile-en-android); aprobado por el autor)* — **F1 Baileys:** `nodejs-mobile` + bundle de Baileys; si falla en Node 18, un intento de plan B; si falla, registrar en `intentos-fallidos.md`. · cubre `RF-03`, `RF-04`, `RNF-04`
-- [x] **T6** — Mediciones en el teléfono del autor: vincular cada motor, bench de 20 corridas con wifi y 20 con datos móviles, tamaño del APK y memoria. *(requiere al autor)* · cubre `RNF-03`, `RNF-05`
-  - *2026-09-23:* el Moto G53 no tiene saldo de datos; las mediciones con **datos móviles** (las que deciden) se hacen en el **Poco M5s** para **ambos motores**, para que la comparación sea en el mismo teléfono y la misma red. El Moto queda para las mediciones con wifi.
-- [x] **T7** — Comparación y decisión: tabla en validation.md; decisión 1 del roadmap a *Decisiones tomadas*; propuesta de cambios en tech-stack.
-
-## Riesgos
 
 | Riesgo | Mitigación |
 |---|---|
@@ -77,3 +66,4 @@ Para la corrida en frío, `bench.sh` (en la PC) hace `am force-stop` de la app y
 - `tech-stack.md` §4 *App Android*: la fila "Motor WhatsApp" pasa a mencionar F1/F4 en lugar de "librería JVM". **Aprobado y aplicado (2026-09-23).**
 - **Aprobado y aplicado (2026-09-23):** `tech-stack.md` §2, requisito del nombre del dispositivo → *"El dispositivo se muestra como 'Google Chrome (WhatsCheck)': con whatsmeow el nombre visible sale del sistema operativo del registro y el nombre del código de emparejamiento usa un valor común válido ('Chrome (Linux)')"*. Motivo: CA-10 e IF-009.
 - **Aplicado (2026-09-23):** la decisión 1 del roadmap pasa a *Decisiones tomadas* (motor = whatsmeow); tech-stack §2 y §4 marcan F4 como elegido y F1 como descartado.
+
