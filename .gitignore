@@ -1,3 +1,6 @@
+# IDE
+.idea/
+*.iml
 
 # Archivo de memoria local para IAs (evitar subir a control de versiones)
 .ai-context.md

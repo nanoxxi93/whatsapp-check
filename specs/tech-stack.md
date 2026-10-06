@@ -143,7 +143,7 @@ Regla estricta definida en [constitution.md](constitution.md). Solo se usa Fireb
 | Normalización de números | **libphonenumber** (Google) | Convertir a E.164 antes de consultar/cachear |
 | Tareas periódicas | **WorkManager** | Mantener viva la sesión |
 | Configuración remota | **Firebase Remote Config** | Kill switch y versión mínima |
-| Build | Gradle Kotlin DSL + Version Catalog | |
+| Build | Gradle Kotlin DSL + Version Catalog (Gradle 8.14+, JDK 21) | JDK 21 requerido para Gradle con Android Studio 2026.2 ([IF-015](intentos-fallidos.md#if-015--ejecutar-gradle-814-con-jbr-25-de-android-studio-20262)) |
 
 ### Módulos
 ```

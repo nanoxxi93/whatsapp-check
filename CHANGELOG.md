@@ -8,6 +8,11 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 
 ## [Sin publicar]
 
+### 2026-10-06
+
+#### Cambiado
+- Configuración de entorno tras actualizar a Android Studio 2026.2.1: exclusión de `.idea/` y `*.iml` en `.gitignore` raíz, y configuración de JDK 21 (Temurin) para compilaciones por terminal y compatibilidad con Gradle ([IF-015](specs/intentos-fallidos.md#if-015--ejecutar-gradle-814-con-jbr-25-de-android-studio-20262)).
+
 ### 2026-09-24
 
 #### Añadido

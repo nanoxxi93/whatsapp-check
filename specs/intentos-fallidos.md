@@ -10,6 +10,7 @@ Registro de lo que **se probó y no funcionó**, o se descartó tras analizarlo,
 
 | ID | Fecha | Tema | Tipo |
 |---|---|---|---|
+| [IF-015](#if-015--ejecutar-gradle-814-con-jbr-25-de-android-studio-20262) | 2026-10-06 | Ejecutar Gradle 8.14 con JBR 25 de Android Studio 2026.2 | Probado |
 | [IF-014](#if-014--observar-efectos-con-otro-cliente-vinculado-activo-o-con-la-última-vez-oculta) | 2026-09-23 | Observar efectos con otro cliente vinculado activo o con la "última vez" oculta | Probado |
 | [IF-013](#if-013--motor-baileys--nodejs-mobile-en-android) | 2026-09-23 | Motor Baileys + `nodejs-mobile` en Android | Descartado por análisis |
 | [IF-012](#if-012--baileys-7-en-node-18-sin-webcrypto-global) | 2026-09-23 | Baileys 7 en Node 18 sin WebCrypto global | Probado |
@@ -44,6 +45,18 @@ Registro de lo que **se probó y no funcionó**, o se descartó tras analizarlo,
 ```
 
 ---
+
+## IF-015 — Ejecutar Gradle 8.14 con JBR 25 de Android Studio 2026.2
+
+- **Fecha:** 2026-10-06
+- **Tipo:** Probado
+- **Contexto:** Actualización de Android Studio a 2026.2.1 ("Rabbit 1").
+- **Qué se intentó:** Ejecutar la compilación de Gradle 8.14.3 (`prototypes/android-engines`) usando el JBR interno por defecto de Android Studio 2026.2 (OpenJDK 25.0.3 en `C:\Program Files\Android\Android Studio\jbr`).
+- **Resultado:** Fallo inmediato del build: `java.lang.IllegalArgumentException: 25.0.3` en `org.jetbrains.kotlin.com.intellij.util.lang.JavaVersion.parse` al evaluar scripts Kotlin DSL (`build.gradle.kts`).
+- **Por qué no sirve:** Gradle 8.14.3 y su compilador embebido de Kotlin (Kotlin 2.0.21) no soportan ejecutarse sobre Java 25.
+- **Evidencia:** Error `java.lang.IllegalArgumentException: 25.0.3` con traza completa en `gradlew help --stacktrace` usando JBR 25.
+- **En su lugar:** Usar JDK 21 (Temurin 21.0.12.1 en `~/.jdks/temurin-21.0.12.1`), configurado como Gradle JVM en `.idea/gradle.xml` y en la variable de entorno `JAVA_HOME`.
+- **Reconsiderar si:** Se actualice a una versión futura de Gradle y AGP (ej. Gradle 9.x+) con soporte nativo para ejecución sobre Java 25.
 
 ## IF-014 — Observar efectos con otro cliente vinculado activo o con la "última vez" oculta
 
