@@ -19,8 +19,9 @@ import kotlin.math.abs
 
 /**
  * Aviso flotante sobre la pantalla de llamada (RF-04). Views simples, sin Compose: vive en una ventana
- * TYPE_APPLICATION_OVERLAY creada desde un servicio. Arriba (≈22 % de la altura) para no tapar los botones
- * de contestar y colgar; se arrastra, se cierra con un toque y se oculta solo a los 45 s.
+ * TYPE_APPLICATION_OVERLAY creada desde un servicio. Centrado en la pantalla (Gravity.CENTER) para no tapar
+ * el número arriba ni los botones abajo, y evitar colisionar con el banner flotante de llamada si se está en otra app;
+ * se arrastra, se cierra con un toque y se oculta solo a los 45 s.
  * Todas las llamadas deben hacerse en el hilo principal.
  */
 class OverlayController(private val context: Context) {
@@ -67,6 +68,8 @@ class OverlayController(private val context: Context) {
         val small = TextView(context).apply {
             setTextColor(Color.parseColor("#DDFFFFFF"))
             setTextSize(TypedValue.COMPLEX_UNIT_SP, 12f)
+            maxLines = 2
+            ellipsize = android.text.TextUtils.TruncateAt.END
         }
         val box = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -83,8 +86,9 @@ class OverlayController(private val context: Context) {
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
             PixelFormat.TRANSLUCENT,
         ).apply {
-            gravity = Gravity.TOP or Gravity.CENTER_HORIZONTAL
-            y = (context.resources.displayMetrics.heightPixels * 0.22).toInt()
+            gravity = Gravity.CENTER
+            x = 0
+            y = 0
         }
         box.setOnTouchListener(DragOrTap(params))
         wm.addView(box, params)

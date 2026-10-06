@@ -18,6 +18,7 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 - El aviso flotante quedaba en "Verificando..." hasta 12 s ante caídas de DNS o falta de red: se añade timeout de 4 s (`OVERLAY_BUDGET_MS`) en `ScreeningService` y comprobación previa de conectividad (`isOnline`) en `CallCheck` ([spec](specs/2026-09-24-spike-llamadas-overlay/)).
 
 #### Cambiado
+- Posicionamiento central del aviso flotante (`Gravity.CENTER`) y límite de 2 líneas con elipsis en subtítulos extensos para evitar tapar el número o botones en pantalla completa y colisionar con la notificación emergente de llamada en segundo plano ([spec](specs/2026-10-06-posicionamiento-overlay/)).
 - Configuración de entorno tras actualizar a Android Studio 2026.2.1: exclusión de `.idea/` y `*.iml` en `.gitignore` raíz, y configuración de JDK 21 (Temurin) para compilaciones por terminal y compatibilidad con Gradle ([IF-015](specs/intentos-fallidos.md#if-015--ejecutar-gradle-814-con-jbr-25-de-android-studio-20262)).
 
 ### 2026-09-24
