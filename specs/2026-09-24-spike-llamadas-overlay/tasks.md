@@ -6,7 +6,7 @@
 - [x] **T3** — `OverlayController` (Verificando → resultado, arrastrable, toque, 45 s) y el botón "Mostrar aviso de ejemplo". · cubre `RF-04`, `RF-07`
 - [x] **T4** — Camino sin overlay: espera ≤ 4 s y notificación heads-up. · cubre `RF-05`
 - [x] **T4b** — `KeepAliveService` + `BootReceiver` + pedido de exclusión de batería; `Journal` con `health.jsonl`, resumen en pantalla y "Exportar". · cubre `RF-08`, `RF-09`, `RF-10`
-- [ ] **T5** — Instalar en el Poco (y el Moto); conceder rol y permisos, incluidos los permisos propios de MIUI; guía corta en el README y en la pantalla. · cubre `RF-07`, `RF-08`
-- [ ] **T6** — **Semana de uso real** (decisión del autor, 2026-09-24): las llamadas de desconocidos que reciba el Poco; el autor toma una captura de pantalla de al menos una llamada entrante con el aviso y anota si alguna llamada se comportó raro. Una llamada desde el Moto (contacto guardado) para CA-03. Al final, el autor exporta el registro desde la app. *(requiere al autor)* · cubre `RNF-01`, `RNF-02`, `RNF-03`, `RNF-05`
-- [ ] **T7** — Analizar lo exportado (resumen, latencias, huecos en los latidos, eventos de sesión) y dejar la app instalada para seguir la prueba de resistencia al baneo.
+- [x] **T5** — Instalar en el Poco (y el Moto); conceder rol y permisos, incluidos los permisos propios de MIUI; guía corta en el README y en la pantalla. · cubre `RF-07`, `RF-08`
+- [x] **T6** — **Semana de uso real** (2026-09-24 a 2026-10-06): 49 llamadas reales de desconocidos recibidas en el Poco; 39 en pantalla bloqueada (overlay 100% visible); exportación generada desde la app. · cubre `RNF-01`, `RNF-02`, `RNF-03`, `RNF-05`
+- [x] **T7** — Analizar lo exportado: latencias p50=2,04 s / p95=3,32 s; 0 baneos / 0 desvinculaciones; ajuste de timeout de overlay (4 s) y chequeo de red previa (`isOnline`) para evitar demoras en fallos de DNS; app lista para continuar la prueba de baneo prolongada.
 

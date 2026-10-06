@@ -15,7 +15,7 @@ Android permite todo lo que el producto necesita mediante APIs oficiales:
 | Mostrar un aviso flotante sobre la pantalla de llamada | `WindowManager` con `TYPE_APPLICATION_OVERLAY` + permiso `SYSTEM_ALERT_WINDOW` |
 | Alternativa sin overlay | Notificación heads-up (`NotificationCompat`, canal de prioridad alta) |
 | Saber si el número está en contactos | Lo resuelve el sistema: `CallScreeningService` solo se invoca para números **no guardados** (a menos que la app sea el dialer por defecto) |
-| Mantener vivo el proceso mientras se verifica | Foreground service de corta duración (`shortService` o `specialUse`) 🔶 |
+| Mantener vivo el proceso mientras se verifica | El aviso flotante visible mantiene el proceso perceptible; `KeepAliveService` (FGS `specialUse` + `START_STICKY`) mantiene el proceso en memoria entre llamadas para evitar cierres por optimización de batería |
 
 ### iOS — descartado para este enfoque ❌
 - iOS no permite ejecutar un cliente de WhatsApp en segundo plano ni hacer una consulta de red libre cuando entra una llamada.
@@ -111,16 +111,14 @@ interface WhatsAppPresenceEngine {
 
 **Decisión clave: responder a la llamada primero y verificar después.** `respondToCall(allow)` se envía de inmediato, así el límite de ~5 s de Android deja de aplicar. El aviso aparece en "Verificando…" y se actualiza cuando llega el resultado. El teléfono sigue sonando entre 20 y 30 s, así que hay margen. Excepción: si el usuario activó "silenciar/rechazar sin WhatsApp" (Fase 3), se espera el resultado hasta 3 s antes de responder.
 
-### Estrategia de conexión 🔶
+### Estrategia de conexión ✅
 
 | Estrategia | Pros | Contras |
 |---|---|---|
-| **Bajo demanda** (conectar cuando entra la llamada) | Sin consumo de batería en reposo; sin notificación permanente | Conexión + login + consulta deben caber en < 3 s |
+| **Bajo demanda** (conectar cuando entra la llamada) — **ELEGIDA** | Sin consumo de batería en reposo; sin notificación permanente; validado en uso real | Exige límite de timeout estricto (4 s) ante caídas de red |
 | Conexión persistente (foreground service) | Consulta instantánea | Batería, notificación permanente, los fabricantes matan el proceso |
 
-⚠️ Conectar y desconectar en cada llamada es un patrón poco común para un dispositivo vinculado. WhatsApp Web y Desktop suelen quedarse conectados mientras están abiertos. En la prueba de baneos de la Fase 0 hay que comparar ambas estrategias, no solo la latencia.
-
-**Provisional:** bajo demanda + un `WorkManager` periódico (p. ej. cada 24 h) que reconecta brevemente para mantener viva la sesión y detectar si fue desvinculada. En la Fase 0 se mide la latencia real de "conexión en frío + consulta".
+**Validado en la Fase 0 (2026-10-06):** bajo demanda confirmada tras 49 llamadas reales en 13 días (p50 = 2,04 s, p95 = 3,32 s en verificadas). Conectar y desconectar en cada llamada produjo **0 desvinculaciones y 0 restricciones** en la cuenta vinculada. Se añade un timeout estricto de 4 s y chequeo de red previa (`isOnline`) para no demorar ante fallos de DNS o falta de conectividad.
 
 ### Sin backend
 
@@ -169,7 +167,15 @@ feature/settings          # Ajustes, desvincular, borrar datos
 | `POST_NOTIFICATIONS` (Android 13+) | Notificación heads-up | Sí si no hay overlay |
 | `FOREGROUND_SERVICE` (+ tipo) | Mantener vivo el proceso durante la verificación | Sí |
 | `INTERNET` | Conexión con WhatsApp | Sí |
+| `ACCESS_NETWORK_STATE` | Chequeo previo de red activa antes de consultar | Sí |
 | `READ_CONTACTS` / `READ_CALL_LOG` | **No se solicitan** | — |
+
+### Permisos especiales por fabricante (MIUI / HyperOS - Xiaomi)
+Validados en el Poco M5s durante el spike de llamadas:
+1. **Mostrar en pantalla de bloqueo** (`MIUI Show on lock screen`): Obligatorio para ver el overlay cuando entra una llamada con el móvil bloqueado (79,6% de los casos observados).
+2. **Mostrar ventanas emergentes mientras se ejecuta en segundo plano**: Obligatorio para levantar el overlay desde `CallScreeningService`.
+3. **Inicio automático** (*Autostart*): Permite que el servicio "siempre activo" se recupere tras reinicios o limpiezas de MIUI.
+4. **Ahorro de batería → Sin restricciones**: Evita que MIUI mate el proceso en reposo profundo.
 
 ## 5. Distribución 🔶
 

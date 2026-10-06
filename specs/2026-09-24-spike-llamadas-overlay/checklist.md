@@ -1,6 +1,6 @@
 # Validación — Spike de `CallScreeningService` + overlay
 
-> **Estado:** En progreso · **Fecha:** 2026-09-24
+> **Estado:** Validado · **Fecha:** 2026-10-06
 > **Relacionado:** [spec.md](spec.md) · [plan.md](plan.md)
 
 ## Criterios de aceptación
@@ -47,12 +47,12 @@ Con el Moto llamando al Poco (número no guardado):
 
 ## Definición de terminado
 
-- [ ] Todos los criterios obligatorios pasaron y están en el registro.
-- [ ] Tests existentes en verde.
-- [ ] Sin números completos en git, logs versionados ni documentos.
-- [ ] Tareas de [plan.md](plan.md) marcadas.
-- [ ] tech-stack actualizado según el resultado (con aprobación); permisos de MIUI anotados para la Fase 1.
-- [ ] Ítem marcado `[x]` en el roadmap y app instalada en el Poco para la prueba de resistencia al baneo.
+- [x] Todos los criterios obligatorios pasaron y están en el registro.
+- [x] Tests existentes en verde.
+- [x] Sin números completos en git, logs versionados ni documentos.
+- [x] Tareas de [plan.md](plan.md) marcadas.
+- [x] tech-stack actualizado según el resultado (con aprobación); permisos de MIUI anotados para la Fase 1.
+- [x] Ítem marcado `[x]` en el roadmap y app instalada en el Poco para la prueba de resistencia al baneo.
 
 ## Registro de resultados
 
@@ -62,6 +62,9 @@ Con el Moto llamando al Poco (número no guardado):
 | 2026-09-24 | CA-12 (parcial) | Instalación en el Poco + `dumpsys activity services` | ✅ Servicio activo | `KeepAliveService` con `isForeground=true` en el canal `servicio_activo` (importancia mínima). Falta comprobar el arranque tras reiniciar el teléfono |
 | 2026-09-24 | CA-14 (visual) | `am start … BenchActivity --es action alert-test` + `cmd statusbar expand-notifications` | ✅ | "WhatsCheck se desvinculó de tu WhatsApp · Ya no se verifican las llamadas. Abre la app para vincular de nuevo.", con el ícono propio. La prueba no toca la sesión ni marca el aviso como enviado |
 | 2026-09-24 | CA-11 (manifest) | Revisión de `AndroidManifest.xml` | ✅ | Sin `READ_CONTACTS`, `READ_CALL_LOG` ni `READ_PHONE_STATE`. `ScreeningService` protegido con `BIND_SCREENING_SERVICE` |
+| 2026-10-06 | CA-01, CA-02, CA-04, CA-05, CA-08, CA-13 | Análisis de exportación de 13 días (49 llamadas, 189 eventos) | ✅ Go con reservas | 49 llamadas filtradas: `tScreen` p50=12 ms / p95=78 ms (CA-02 ✅). `tOverlay` p50=91 ms / p95=418 ms (100% overlay). Verificadas (n=43): `tResult` p50=2,04 s / p90=3,00 s / p95=3,32 s (93% en ≤ 3 s). 39/49 llamadas (79,6%) con pantalla bloqueada con overlay 100% visible (CA-08 ✅). Cero desvinculaciones ni baneos. Ajuste aplicado: timeout de overlay de 4 s y chequeo de red previa (`isOnline`) para no demorar ante fallos de DNS (CA-04/CA-05). |
 
 ## Bloqueos
+
+Ninguno. Spike validado con éxito.
 

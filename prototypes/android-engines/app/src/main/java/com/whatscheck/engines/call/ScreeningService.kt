@@ -31,7 +31,11 @@ class ScreeningService : CallScreeningService() {
             val tScreen = SystemClock.elapsedRealtime() - t0
             val tOverlay = runCatching { overlay.show(OverlayController.Kind.CHECKING) - t0 }.getOrNull()
             CallCheck.scope.launch {
-                val outcome = CallCheck.verify(ctx, digits)
+                val outcome = withTimeoutOrNull(OVERLAY_BUDGET_MS) { CallCheck.verify(ctx, digits) }
+                    ?: CallCheck.Outcome(
+                        com.whatscheck.engine.CheckResult.unknown(com.whatscheck.engine.UnknownReason.TIMEOUT),
+                        "tiempo de espera agotado", null, null, null,
+                    )
                 val shown = runCatching { overlay.show(CallCheck.kindOf(outcome.result), outcome.detail) }.getOrNull()
                 val tResult = (shown ?: SystemClock.elapsedRealtime()) - t0
                 Journal.call(ctx, CallCheck.record(ctx, digits, outcome, if (tOverlay != null) "overlay" else "overlay-fallido", t0, tScreen, tOverlay, tResult))
@@ -55,5 +59,7 @@ class ScreeningService : CallScreeningService() {
     companion object {
         /** Telecom da ~5 s para responder; se deja margen. */
         const val NO_OVERLAY_BUDGET_MS = 4_000L
+        /** Límite para no dejar colgado el aviso si la red o DNS tardan. */
+        const val OVERLAY_BUDGET_MS = 4_000L
     }
 }

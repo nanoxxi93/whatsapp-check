@@ -10,6 +10,13 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 
 ### 2026-10-06
 
+#### Añadido
+- Validación y cierre del spike de `CallScreeningService` + overlay con 49 llamadas reales en 13 días ([spec](specs/2026-09-24-spike-llamadas-overlay/)): latencia p50 2,04 s / p95 3,32 s en verificadas, overlay 100% visible (incluso con pantalla bloqueada) y 0 restricciones de WhatsApp.
+- Documentación de permisos especiales de MIUI (Xiaomi) y confirmación de la estrategia de conexión bajo demanda en `tech-stack.md`.
+
+#### Corregido
+- El aviso flotante quedaba en "Verificando..." hasta 12 s ante caídas de DNS o falta de red: se añade timeout de 4 s (`OVERLAY_BUDGET_MS`) en `ScreeningService` y comprobación previa de conectividad (`isOnline`) en `CallCheck` ([spec](specs/2026-09-24-spike-llamadas-overlay/)).
+
 #### Cambiado
 - Configuración de entorno tras actualizar a Android Studio 2026.2.1: exclusión de `.idea/` y `*.iml` en `.gitignore` raíz, y configuración de JDK 21 (Temurin) para compilaciones por terminal y compatibilidad con Gradle ([IF-015](specs/intentos-fallidos.md#if-015--ejecutar-gradle-814-con-jbr-25-de-android-studio-20262)).
 

@@ -1,6 +1,6 @@
 # Plan — Spike de `CallScreeningService` + overlay
 
-> **Estado:** En progreso · **Fecha:** 2026-09-24
+> **Estado:** Validado · **Fecha:** 2026-10-06
 > **Relacionado:** [spec.md](spec.md) · [checklist.md](checklist.md) · [tech-stack](../product/tech-stack.md)
 
 ## Enfoque

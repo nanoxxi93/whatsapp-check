@@ -2,6 +2,8 @@ package com.whatscheck.engines.call
 
 import android.app.KeyguardManager
 import android.content.Context
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.PowerManager
 import android.os.Process
 import android.os.SystemClock
@@ -13,6 +15,7 @@ import com.whatscheck.engine.UnknownReason
 import com.whatscheck.engines.Engines
 import com.whatscheck.engines.Phone
 import com.whatscheck.engines.Prefs
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -49,10 +52,21 @@ object CallCheck {
         val tQuery: Long?,
     )
 
+    /** True si el dispositivo tiene una red con acceso a Internet activo. */
+    fun isOnline(context: Context): Boolean {
+        val cm = context.getSystemService(ConnectivityManager::class.java) ?: return true
+        val net = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(net) ?: return false
+        return caps.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+    }
+
     /** Consulta en frío. Se serializa: si entran dos llamadas seguidas, la segunda espera a la primera. */
     suspend fun verify(context: Context, digits: String?): Outcome = withContext(Dispatchers.IO) {
         if (digits == null) {
             return@withContext Outcome(CheckResult.unknown(UnknownReason.NOT_CONNECTED), "número oculto o no válido", null, null, null)
+        }
+        if (!isOnline(context)) {
+            return@withContext Outcome(CheckResult.unknown(UnknownReason.NOT_CONNECTED), "sin conexión a internet", null, null, null)
         }
         val engine = Engines.whatsmeow(context)
         mutex.withLock {
@@ -65,6 +79,8 @@ object CallCheck {
                 val result = engine.check(digits)
                 val tQuery = SystemClock.elapsedRealtime() - tq
                 Outcome(result, result.reason?.name, timings.tEngineMs, timings.tReadyMs, tQuery)
+            } catch (e: CancellationException) {
+                throw e
             } catch (e: Exception) {
                 Outcome(CheckResult.unknown(UnknownReason.NOT_CONNECTED), e.message?.let(Phone::maskInText), null, null, null)
             } finally {

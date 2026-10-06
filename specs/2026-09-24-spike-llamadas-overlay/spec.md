@@ -1,6 +1,6 @@
 # Requisitos — Spike de `CallScreeningService` + overlay
 
-> **Estado:** En progreso · **Fecha:** 2026-09-24
+> **Estado:** Validado · **Fecha:** 2026-10-06
 > **Ítem del roadmap:** Fase 0 — Spike de `CallScreeningService` + overlay (`M`)
 > **Relacionado:** [plan.md](plan.md) · [checklist.md](checklist.md) · [roadmap](../product/roadmap.md) · [tech-stack §1 y §3](../product/tech-stack.md#3-arquitectura-general)
 
