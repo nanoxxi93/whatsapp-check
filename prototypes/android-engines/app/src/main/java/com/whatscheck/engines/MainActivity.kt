@@ -106,9 +106,23 @@ class MainActivity : ComponentActivity() {
 }
 
 object Prefs {
+    const val DEFAULT_OVERLAY_DURATION_SECONDS = 8
+    val ALLOWED_OVERLAY_DURATIONS = listOf(5, 8, 12)
+
+    fun sanitizeOverlayDuration(seconds: Int): Int =
+        if (seconds in ALLOWED_OVERLAY_DURATIONS) seconds else DEFAULT_OVERLAY_DURATION_SECONDS
+
     private fun p(c: Context) = c.getSharedPreferences("whatscheck", Context.MODE_PRIVATE)
     fun keepAlive(c: Context) = p(c).getBoolean("keepAlive", true)
     fun setKeepAlive(c: Context, on: Boolean) = p(c).edit().putBoolean("keepAlive", on).apply()
+
+    fun overlayDurationSeconds(c: Context): Int =
+        sanitizeOverlayDuration(p(c).getInt("overlayDurationSeconds", DEFAULT_OVERLAY_DURATION_SECONDS))
+
+    fun setOverlayDurationSeconds(c: Context, seconds: Int) {
+        val sanitized = sanitizeOverlayDuration(seconds)
+        p(c).edit().putInt("overlayDurationSeconds", sanitized).apply()
+    }
 
     /** Último problema de sesión ya notificado (para avisar una sola vez por problema). */
     fun lastSessionAlert(c: Context): String? = p(c).getString("lastSessionAlert", null)

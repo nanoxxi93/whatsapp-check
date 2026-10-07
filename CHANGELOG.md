@@ -8,6 +8,14 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 
 ## [Sin publicar]
 
+### 2026-10-07
+
+#### Añadido
+- Duración configurable del aviso flotante ([spec](specs/2026-10-07-duracion-aviso-flotante/)): selector desplegable en Ajustes (5 s, 8 s y 12 s) persistido en preferencias y suite de pruebas unitarias (`PrefsTest`).
+
+#### Cambiado
+- Reducción del auto-ocultamiento del aviso flotante: desacoplamiento del temporizador entre el estado preliminar (10 s de seguridad en "Verificando...") y el resultado final (8 s por defecto en lugar de 45 s), con pausa durante el arrastre táctil para evitar desaparición abrupta.
+
 ### 2026-10-06
 
 #### Añadido

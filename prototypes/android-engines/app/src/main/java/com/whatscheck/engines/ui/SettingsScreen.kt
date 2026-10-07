@@ -3,11 +3,15 @@ package com.whatscheck.engines.ui
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
@@ -15,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -45,6 +50,8 @@ fun SettingsScreen(
     val scope = rememberCoroutineScope()
     val setup = remember(tick) { Setup.read(context) }
     var keepAlive by remember { mutableStateOf(Prefs.keepAlive(context)) }
+    var overlayDuration by remember(tick) { mutableIntStateOf(Prefs.overlayDurationSeconds(context)) }
+    var durationExpanded by remember { mutableStateOf(false) }
     var confirmUnlink by remember { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -90,10 +97,60 @@ fun SettingsScreen(
                     Handler(Looper.getMainLooper()).postDelayed(onChanged, 300)
                 })
             }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text("Duración del aviso", style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        "Tiempo que permanece el resultado en pantalla.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                Box {
+                    OutlinedButton(onClick = { durationExpanded = true }) {
+                        Text("$overlayDuration s ▼")
+                    }
+                    DropdownMenu(
+                        expanded = durationExpanded,
+                        onDismissRequest = { durationExpanded = false },
+                    ) {
+                        val options = listOf(
+                            5 to "5 segundos",
+                            8 to "8 segundos (recomendado)",
+                            12 to "12 segundos",
+                        )
+                        options.forEach { (sec, label) ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        label,
+                                        fontWeight = if (sec == overlayDuration) FontWeight.Bold else FontWeight.Normal,
+                                    )
+                                },
+                                onClick = {
+                                    overlayDuration = sec
+                                    Prefs.setOverlayDurationSeconds(context, sec)
+                                    durationExpanded = false
+                                    onChanged()
+                                },
+                            )
+                        }
+                    }
+                }
+            }
             OutlinedButton(enabled = setup.overlay, onClick = {
                 val overlay = CallCheck.overlay(context)
+                val durationSec = Prefs.overlayDurationSeconds(context)
                 overlay.show(OverlayController.Kind.CHECKING, "Aviso de ejemplo")
-                Handler(Looper.getMainLooper()).postDelayed({ overlay.show(OverlayController.Kind.HAS, "Aviso de ejemplo · toca para cerrar") }, 2_000)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    overlay.show(
+                        OverlayController.Kind.HAS,
+                        "Aviso de ejemplo (${durationSec} s) · toca para cerrar",
+                    )
+                }, 1_500)
             }) { Text("Mostrar aviso de ejemplo") }
         }
 
