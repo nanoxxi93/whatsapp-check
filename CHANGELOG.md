@@ -15,6 +15,7 @@ Categorías: **Añadido** (algo nuevo) · **Cambiado** (algo existente se compor
 
 #### Cambiado
 - Reducción del auto-ocultamiento del aviso flotante: desacoplamiento del temporizador entre el estado preliminar (10 s de seguridad en "Verificando...") y el resultado final (8 s por defecto en lugar de 45 s), con pausa durante el arrastre táctil para evitar desaparición abrupta.
+- Actualización de versión de la app a 0.2.1 (código de versión 3) en `build.gradle.kts`.
 
 ### 2026-10-06
 

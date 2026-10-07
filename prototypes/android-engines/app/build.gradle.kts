@@ -12,8 +12,8 @@ android {
         applicationId = "com.whatscheck.engines"
         minSdk = 29
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.2.0"
+        versionCode = 3
+        versionName = "0.2.1"
         // El .aar de whatsmeow solo trae arm64-v8a (los dos teléfonos de prueba son arm64)
         ndk { abiFilters += "arm64-v8a" }
     }
